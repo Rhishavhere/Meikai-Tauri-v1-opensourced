@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, RotateCw, Home, X, Minus } from 'lucide-reac
 import { PhysicalPosition, PhysicalSize } from '@tauri-apps/api/dpi';
 
 function App() {
-  const [url, setUrl] = useState("https://www.google.com");
+  const [url, setUrl] = useState("");
   const [isNotchMode, setIsNotchMode] = useState(false);
   const [activeContentWindow, setActiveContentWindow] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,8 +35,9 @@ function App() {
     const window = getCurrentWindow();
 
     // Transform back to panel at center
+    setUrl("")
     await window.setAlwaysOnTop(false);
-    await window.setSize(new PhysicalSize(800, 400));
+    await window.setSize(new PhysicalSize(600, 400));
     await window.center();
 
     setIsNotchMode(false);
@@ -138,20 +139,20 @@ function App() {
   // Normal Panel Mode
   if (!isNotchMode) {
     return (
-      <div className="h-screen w-screen flex flex-col bg-white backdrop-blur-lg overflow-hidden">
+      <div className="h-screen w-screen flex flex-col bg-white overflow-hidden">
         {/* Window Controls Bar */}
           <div className="flex fixed gap-1 right-4 top-2 justify-center items-center">
             <button
               onClick={() => getCurrentWindow().minimize()}
-              className="w-7 h-6 hover:bg-gray-700 hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
+              className="w-7 h-6 hover:bg-gray-700/50 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
             >
-              <Minus className="w-3 h-3" />
+              <Minus className="w-4 h-4" />
             </button>
             <button
               onClick={() => getCurrentWindow().close()}
-              className="w-7 h-6 hover:bg-rose-600 hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-600"
+              className="w-7 h-6 hover:bg-rose-600/70 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-600"
             >
-              <X className="w-3 h-3" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 
@@ -179,14 +180,14 @@ function App() {
               onSubmit={handleSubmit}
               className="mb-8"
             >
-              <div className="relative">
+              <div className="relative flex justify-center">
                 <input
                   ref={inputRef}
                   type="text"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onFocus={(e) => e.target.select()}
-                  className="w-20 px-6 py-4 bg-white rounded-xl text-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all shadow-lg"
+                  className="w-96 px-6 py-2 bg-white rounded-xl text-lg border border-black/30 focus:border-blue-400 focus:outline-none transition-all shadow-lg placeholder-gray-600"
                   placeholder="Search or enter URL"
                   autoFocus
                 />
@@ -205,14 +206,14 @@ function App() {
                 { name: "GitHub", url: "https://github.com" },
                 { name: "Twitter", url: "https://twitter.com" },
                 { name: "Apple", url: "https://apple.com" },
-                { name: "Rhishav.com", url: "https://rhishav.com" },
+                { name: "Rhishav", url: "https://rhishav.com" },
               ].map((site) => (
                 <button
                   key={site.name}
                   onClick={() => handleQuickLink(site.url)}
-                  className="p-4 bg-white rounded-xl hover:shadow-xl transition-all border-2 border-gray-100 hover:border-blue-200"
+                  className="p-2 bg-white backdrop-blur-md rounded-xl hover:shadow-xl hover:bg-white/30 transition-all border border-black/10 hover:border-blue-400"
                 >
-                  <div className="text-base font-medium text-gray-800">{site.name}</div>
+                  <div className="text-sm font-medium text-gray-800">{site.name}</div>
                 </button>
               ))}
             </motion.div>
@@ -224,16 +225,16 @@ function App() {
 
   // Notch Mode
   return (
-    <div className="h-full w-full flex flex-col bg-gray-900 shadow-2xl border-b-4 border-blue-500">
+    <div className="h-full w-full flex flex-col bg-gray-900/30 backdrop-blur-2xl shadow-2xl border-b-4 border-blue-500/50">
       {/* Debug indicator */}
-      <div className="absolute top-0 left-0 bg-red-500 text-white text-xs px-2 py-1 z-50">
+      <div className="absolute top-0 left-0 bg-red-500/80 backdrop-blur-sm text-white text-xs px-2 py-1 z-50">
         NOTCH MODE ACTIVE
       </div>
 
       {/* Notch Bar */}
       <div
         data-tauri-drag-region
-        className="flex-1 flex items-center gap-2 px-4 bg-gradient-to-r from-gray-800 to-gray-900"
+        className="flex-1 flex items-center gap-2 px-4 bg-gradient-to-r from-gray-800/40 to-gray-900/40 backdrop-blur-xl"
       >
         {/* Navigation Controls */}
         <button
@@ -273,7 +274,7 @@ function App() {
             onChange={(e) => setUrl(e.target.value)}
             onFocus={(e) => e.target.select()}
             placeholder="Search or enter URL"
-            className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            className="w-full px-4 py-2 bg-gray-700/50 backdrop-blur-md text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-700/70 transition-all placeholder-gray-400"
           />
         </form>
 
