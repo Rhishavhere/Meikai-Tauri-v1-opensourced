@@ -14,3 +14,10 @@ declare namespace JSX {
     >;
   }
 }
+
+interface HTMLWebViewElement extends HTMLElement {
+  src: string;
+  reload(): void;
+  goBack(): void;
+  goForward(): void;
+}
