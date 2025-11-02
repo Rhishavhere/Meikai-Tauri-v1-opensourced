@@ -66,8 +66,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/manta-browser.git
-   cd manta-browser
+   git clone https://github.com/yourusername/meikai-browser.git
+   cd meikai-browser
    ```
 
 2. **Install dependencies**
@@ -92,7 +92,7 @@ The built executable will be in `src-tauri/target/release/`.
 ## 🎯 Usage
 
 ### Panel Mode (Launcher)
-1. Launch Manta Browser
+1. Launch Meikai Browser
 2. Enter a URL or search query in the search bar
 3. Or click one of the quick link buttons (Google, YouTube, GitHub, etc.)
 
@@ -140,7 +140,7 @@ The built executable will be in `src-tauri/target/release/`.
 ### Project Structure
 
 ```
-manta-browser/
+meikai-browser/
 ├── src/                      # React frontend
 │   ├── App.tsx              # Main application (Panel + Notch modes)
 │   ├── main.tsx             # React entry point

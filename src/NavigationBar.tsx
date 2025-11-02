@@ -117,7 +117,7 @@ export default function NavigationBar() {
         data-tauri-drag-region
       >
         <div className="flex-1 text-xs px-3 text-white" data-tauri-drag-region>
-          Manta Browser
+          Meikai Browser
         </div>
         <div className="flex">
           <button

@@ -1,11 +1,11 @@
-# Manta Browser - Structure & Customization Guide
+# Meikai Browser - Structure & Customization Guide
 
 This guide explains the project structure and where to make changes to customize the main window, floating dock (notch), and new browser windows.
 
 ## 📁 Project Structure Overview
 
 ```
-manta-browser/
+meikai-browser/
 ├── src/                          # Frontend code
 │   ├── App.tsx                   # ⭐ MAIN WINDOW (Panel + Notch modes)
 │   ├── main.tsx                  # Entry point for main window
@@ -49,7 +49,7 @@ if (!isNotchMode) {
 **Title & Subtitle** (Lines 173-178):
 ```tsx
 <h1 className="text-6xl font-bold text-black mb-4">
-  Manta Browser  {/* Change title here */}
+  Meikai Browser  {/* Change title here */}
 </h1>
 <p className="text-gray-500 text-lg">
   Using native WebView2 - Each site opens in a new window
@@ -100,7 +100,7 @@ if (!isNotchMode) {
   data-tauri-drag-region
   className="h-8 bg-gray-900 flex items-center justify-between px-4 select-none"
 >
-  <div className="text-xs text-gray-300 font-medium">Manta Browser</div>
+  <div className="text-xs text-gray-300 font-medium">Meikai Browser</div>
   <div className="flex gap-2">
     <button onClick={() => getCurrentWindow().minimize()}>
       <Minus className="w-3 h-3" />
@@ -226,7 +226,7 @@ async fn create_content_window(
         &content_label,
         WebviewUrl::External(url.parse().map_err(|e| format!("Invalid URL: {:?}", e))?)
     )
-    .title("Manta Browser")           // 🎨 Window title
+    .title("Meikai Browser")           // 🎨 Window title
     .inner_size(1200.0, 800.0)       // 🎨 Window size (width, height)
     .center()                         // 🎨 Position (center on screen)
     .resizable(true)                  // 🎨 Resizable?
@@ -249,7 +249,7 @@ async fn create_content_window(
 
 **Window Title** (Line 18):
 ```rust
-.title("Manta Browser")  // Change to anything
+.title("Meikai Browser")  // Change to anything
 // Example: .title("My Custom Browser")
 ```
 

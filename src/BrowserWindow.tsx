@@ -86,7 +86,7 @@ export default function BrowserWindow() {
         data-tauri-drag-region
       >
         <div className="flex-1 text-xs px-3" data-tauri-drag-region>
-          Manta Browser
+          Meikai Browser
         </div>
         <div className="flex">
           <button

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "manta-browser",
+  "productName": "meikai-browser",
   "version": "0.1.0",
-  "identifier": "com.manta.browser",
+  "identifier": "com.meikai.browser",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Manta Browser",
+        "title": "Meikai Browser",
         "label": "main",
         "width": 1200,
         "height": 800,

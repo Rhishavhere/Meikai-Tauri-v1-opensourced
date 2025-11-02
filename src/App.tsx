@@ -144,7 +144,7 @@ function App() {
           data-tauri-drag-region
           className="h-8 bg-gray-900 flex items-center justify-between px-4 select-none"
         >
-          <div className="text-xs text-gray-300 font-medium">Manta Browser</div>
+          <div className="text-xs text-gray-300 font-medium">Meikai Browser</div>
           <div className="flex gap-2">
             <button
               onClick={() => getCurrentWindow().minimize()}
@@ -170,7 +170,7 @@ function App() {
               className="text-center mb-12"
             >
               <h1 className="text-6xl font-bold text-black mb-4">
-                Manta Browser
+                Meikai Browser
               </h1>
               <p className="text-gray-500 text-lg">
                 Using native WebView2 - Each site opens in a new window

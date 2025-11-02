@@ -15,7 +15,7 @@ async fn create_content_window(
         &content_label,
         WebviewUrl::External(url.parse().map_err(|e| format!("Invalid URL: {:?}", e))?)
     )
-    .title("Manta Browser")
+    .title("Meikai Browser")
     .inner_size(1200.0, 800.0)
     .center() // Center on screen
     .resizable(true) // Fully resizable

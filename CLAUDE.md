@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Manta Browser is a Tauri-based desktop application that provides a unique web browsing experience using native WebView2. The main window transforms into a screen-top "notch" control bar when browsing, while each website opens in a separate native window at the center of the screen.
+Meikai is a Tauri-based desktop application that provides a unique web browsing experience using native WebView2. The main window transforms into a screen-top "notch" control bar when browsing, while each website opens in a separate native window at the center of the screen.
 
 ## Tech Stack
 
