@@ -36,7 +36,7 @@ function App() {
 
     // Transform back to panel at center
     await window.setAlwaysOnTop(false);
-    await window.setSize(new PhysicalSize(1200, 800));
+    await window.setSize(new PhysicalSize(800, 400));
     await window.center();
 
     setIsNotchMode(false);
@@ -138,42 +138,37 @@ function App() {
   // Normal Panel Mode
   if (!isNotchMode) {
     return (
-      <div className="h-screen w-screen flex flex-col bg-linear-to-br from-blue-50 to-purple-50 overflow-hidden">
+      <div className="h-screen w-screen flex flex-col bg-white backdrop-blur-lg overflow-hidden">
         {/* Window Controls Bar */}
-        <div
-          data-tauri-drag-region
-          className="h-8 bg-gray-900 flex items-center justify-between px-4 select-none"
-        >
-          <div className="text-xs text-gray-300 font-medium">Meikai Browser</div>
-          <div className="flex gap-2">
+          <div className="flex fixed gap-1 right-4 top-2 justify-center items-center">
             <button
               onClick={() => getCurrentWindow().minimize()}
-              className="w-8 h-6 hover:bg-gray-700 rounded flex items-center justify-center transition-colors text-gray-300"
+              className="w-7 h-6 hover:bg-gray-700 hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
             >
               <Minus className="w-3 h-3" />
             </button>
             <button
               onClick={() => getCurrentWindow().close()}
-              className="w-8 h-6 hover:bg-red-500 hover:text-white rounded flex items-center justify-center transition-colors text-gray-300"
+              className="w-7 h-6 hover:bg-rose-600 hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-600"
             >
               <X className="w-3 h-3" />
             </button>
           </div>
-        </div>
+
 
         {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center">
+        <div data-tauri-drag-region className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-2xl px-8">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-12"
             >
-              <h1 className="text-6xl font-bold text-black mb-4">
+              <p className="text-4xl text-black mb-4">
                 Meikai Browser
-              </h1>
+              </p>
               <p className="text-gray-500 text-lg">
-                Using native WebView2 - Each site opens in a new window
+                Built for focus. Designed for flow
               </p>
             </motion.div>
 
@@ -191,7 +186,7 @@ function App() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onFocus={(e) => e.target.select()}
-                  className="w-full px-6 py-4 bg-white rounded-xl text-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all shadow-lg"
+                  className="w-20 px-6 py-4 bg-white rounded-xl text-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all shadow-lg"
                   placeholder="Search or enter URL"
                   autoFocus
                 />

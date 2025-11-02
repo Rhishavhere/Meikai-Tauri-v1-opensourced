@@ -14,12 +14,13 @@
       {
         "title": "Meikai Browser",
         "label": "main",
-        "width": 1200,
-        "height": 800,
+        "width": 600,
+        "height": 400,
         "decorations": false,
-        "transparent": false,
-        "resizable": true,
-        "fullscreen": false
+        "transparent": true,
+        "resizable": false,
+        "fullscreen": false,
+        "center": true
       }
     ],
     "security": {
