@@ -6,7 +6,10 @@
       "WebFetch(domain:docs.rs)",
       "Bash(dir:*)",
       "Bash(cargo clean:*)",
-      "Bash(cargo build:*)"
+      "Bash(cargo build:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm run tauri:*)"
     ],
     "deny": [],
     "ask": []

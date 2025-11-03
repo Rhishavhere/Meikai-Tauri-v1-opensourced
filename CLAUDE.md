@@ -53,10 +53,6 @@ The main window has **two modes**:
 
 #### Other Components
 - **src/main.tsx**: React app entry point for main window
-- **src/BrowserWindow.tsx**: Unused wrapper component (replaced by notch mode)
-- **src/NavigationBar.tsx**: Standalone navigation component (not currently used)
-- **src/browser-main.tsx**: Entry point for browser wrapper (not currently used)
-- **src/nav-main.tsx**: Entry point for navigation overlay (not currently used)
 
 ### Backend (Rust)
 
@@ -120,13 +116,11 @@ The main window has **two modes**:
 - `core:window:allow-available-monitors` - Get screen dimensions
 - Standard: minimize, maximize, close, drag
 
-### Multi-Page App Structure
+### Vite Configuration
 
 **Vite Config** (`vite.config.ts`):
-- Multi-page setup with three entry points:
-  - `index.html` → Main window (Panel/Notch modes)
-  - `browser.html` → Unused browser wrapper
-  - `nav.html` → Unused navigation overlay
+- Single-page application setup
+- Entry point: `index.html` → Main window (Panel/Notch modes)
 
 ## Key Implementation Details
 
@@ -172,12 +166,11 @@ The main window has **two modes**:
 
 ## Build System
 
-- **Vite**: Watches src directory, ignores src-tauri
+- **Vite**: Watches src directory, ignores src-tauri, single-page app
 - **Tauri build hooks**:
   - `beforeDevCommand`: npm run dev
   - `beforeBuildCommand`: npm run build
   - `frontendDist`: ../dist
-- **Rollup**: Multi-page bundling for index/browser/nav HTML files
 
 ## Common Patterns
 

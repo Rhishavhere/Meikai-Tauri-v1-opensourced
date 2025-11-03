@@ -1,114 +1,16 @@
-   0.163225700s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint: fingerprint error for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: false }/TargetInner { ..: lib_target("meikai_browser_lib", ["staticlib", "cdylib", "rlib"], "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs", Edition2021) }
-   0.163261200s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:     err: failed to read `E:\CodeRepo\manta-browser\src-tauri\target\debug\.fingerprint\meikai-browser-8253af93cdba881f\lib-meikai_browser_lib`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_path
-   6: git_filter_source_path
-   7: git_filter_source_path
-   8: git_filter_source_path
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_filter_source_repo
-  12: git_filter_source_repo
-  13: git_filter_source_repo
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
-   0.213448100s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint: fingerprint error for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: true }/TargetInner { ..: lib_target("meikai_browser_lib", ["staticlib", "cdylib", "rlib"], "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs", Edition2021) }
-   0.213465400s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:     err: failed to read `E:\CodeRepo\manta-browser\src-tauri\target\debug\.fingerprint\meikai-browser-47e20bf46cd349dd\test-lib-meikai_browser_lib`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_path
-   6: git_filter_source_path
-   7: git_filter_source_path
-   8: git_filter_source_path
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_filter_source_repo
-  12: git_filter_source_repo
-  13: git_filter_source_repo
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
-   0.214458600s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint: fingerprint error for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: false }/TargetInner { name: "meikai-browser", doc: true, ..: with_path("E:\\CodeRepo\\manta-browser\\src-tauri\\src\\main.rs", Edition2021) }
-   0.214468800s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint:     err: failed to read `E:\CodeRepo\manta-browser\src-tauri\target\debug\.fingerprint\meikai-browser-a522162cf72c1b32\bin-meikai-browser`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_path
-   6: git_filter_source_path
-   7: git_filter_source_path
-   8: git_filter_source_path
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_filter_source_repo
-  12: git_filter_source_repo
-  13: git_filter_source_repo
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
-   0.215271400s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint: fingerprint error for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: true }/TargetInner { name: "meikai-browser", doc: true, ..: with_path("E:\\CodeRepo\\manta-browser\\src-tauri\\src\\main.rs", Edition2021) }
-   0.215279800s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint:     err: failed to read `E:\CodeRepo\manta-browser\src-tauri\target\debug\.fingerprint\meikai-browser-b2b8e3b6a216b951\test-bin-meikai-browser`
-
-Caused by:
-    The system cannot find the file specified. (os error 2)
-
-Stack backtrace:
-   0: git_midx_writer_dump
-   1: git_midx_writer_dump
-   2: git_midx_writer_dump
-   3: git_midx_writer_dump
-   4: git_filter_source_repo
-   5: git_filter_source_path
-   6: git_filter_source_path
-   7: git_filter_source_path
-   8: git_filter_source_path
-   9: git_filter_source_repo
-  10: git_filter_source_repo
-  11: git_filter_source_repo
-  12: git_filter_source_repo
-  13: git_filter_source_repo
-  14: <unknown>
-  15: <unknown>
-  16: git_midx_writer_dump
-  17: git_filter_source_repo
-  18: git_midx_writer_dump
-  19: BaseThreadInitThunk
-  20: RtlUserThreadStart
+   0.202789900s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint: stale: changed "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs"
+   0.202805200s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:           (vs) "E:\\CodeRepo\\manta-browser\\src-tauri\\target\\debug\\.fingerprint\\meikai-browser-8253af93cdba881f\\dep-lib-meikai_browser_lib"
+   0.202808600s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 13406613173, nanos: 692242100 } < FileTime { seconds: 13406613319, nanos: 971717700 }
+   0.202986200s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint: fingerprint dirty for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: false }/TargetInner { ..: lib_target("meikai_browser_lib", ["staticlib", "cdylib", "rlib"], "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs", Edition2021) }
+   0.202996600s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "E:\\CodeRepo\\manta-browser\\src-tauri\\target\\debug\\.fingerprint\\meikai-browser-8253af93cdba881f\\dep-lib-meikai_browser_lib", reference_mtime: FileTime { seconds: 13406613173, nanos: 692242100 }, stale: "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs", stale_mtime: FileTime { seconds: 13406613319, nanos: 971717700 } }))
+   0.225256800s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint: stale: changed "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs"
+   0.225267900s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:           (vs) "E:\\CodeRepo\\manta-browser\\src-tauri\\target\\debug\\.fingerprint\\meikai-browser-47e20bf46cd349dd\\dep-test-lib-meikai_browser_lib"
+   0.225270500s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 13406613173, nanos: 691243300 } < FileTime { seconds: 13406613319, nanos: 971717700 }
+   0.225331300s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint: fingerprint dirty for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: true }/TargetInner { ..: lib_target("meikai_browser_lib", ["staticlib", "cdylib", "rlib"], "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs", Edition2021) }
+   0.225339400s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai_browser_lib"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "E:\\CodeRepo\\manta-browser\\src-tauri\\target\\debug\\.fingerprint\\meikai-browser-47e20bf46cd349dd\\dep-test-lib-meikai_browser_lib", reference_mtime: FileTime { seconds: 13406613173, nanos: 691243300 }, stale: "E:\\CodeRepo\\manta-browser\\src-tauri\\src\\lib.rs", stale_mtime: FileTime { seconds: 13406613319, nanos: 971717700 } }))
+   0.226068300s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint: fingerprint dirty for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: false }/TargetInner { name: "meikai-browser", doc: true, ..: with_path("E:\\CodeRepo\\manta-browser\\src-tauri\\src\\main.rs", Edition2021) }
+   0.226077700s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "meikai_browser_lib" })
+   0.226738200s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint: fingerprint dirty for meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)/Check { test: true }/TargetInner { name: "meikai-browser", doc: true, ..: with_path("E:\\CodeRepo\\manta-browser\\src-tauri\\src\\main.rs", Edition2021) }
+   0.226746500s  INFO prepare_target{force=false package_id=meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri) target="meikai-browser"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "meikai_browser_lib" })
     Checking meikai-browser v0.1.0 (E:\CodeRepo\manta-browser\src-tauri)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.53s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.77s

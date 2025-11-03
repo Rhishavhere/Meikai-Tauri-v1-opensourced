@@ -87,6 +87,26 @@ async fn close_browser_window(
     Ok(())
 }
 
+#[tauri::command]
+async fn minimize_browser_window(
+    app: tauri::AppHandle,
+    window_label: String,
+) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(&window_label) {
+        // Check if window is minimized
+        let is_minimized = window.is_minimized().map_err(|e| e.to_string())?;
+
+        if is_minimized {
+            // Unminimize (restore) the window
+            window.unminimize().map_err(|e| e.to_string())?;
+        } else {
+            // Minimize the window
+            window.minimize().map_err(|e| e.to_string())?;
+        }
+    }
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -98,7 +118,8 @@ pub fn run() {
             go_back,
             go_forward,
             reload_page,
-            close_browser_window
+            close_browser_window,
+            minimize_browser_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
