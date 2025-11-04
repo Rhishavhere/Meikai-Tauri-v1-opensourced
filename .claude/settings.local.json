@@ -9,7 +9,11 @@
       "Bash(cargo build:*)",
       "Bash(rm:*)",
       "Bash(mkdir:*)",
-      "Bash(npm run tauri:*)"
+      "Bash(npm run tauri:*)",
+      "Bash(where:*)",
+      "Bash(winget install:*)",
+      "Bash(winget search:*)",
+      "Bash(reg query \"HKLM\\SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v3.5\" /v Install)"
     ],
     "deny": [],
     "ask": []

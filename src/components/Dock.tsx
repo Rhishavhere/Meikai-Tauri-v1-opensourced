@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { ChevronLeft, ChevronRight, RotateCw, Home, X, Minus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCw, Home, X, Minus, Square } from 'lucide-react';
 
 interface DockProps {
   activeContentWindow: string | null;
@@ -64,6 +64,12 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
     }
   };
 
+  const handleMaximize = async () => {
+    if (activeContentWindow) {
+      await invoke("toggle_maximize_browser_window", { windowLabel: activeContentWindow });
+    }
+  };
+
   return (
     <div className="h-full w-full flex flex-col">
       {/* Dock Bar */}
@@ -110,21 +116,30 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
           />
         </form>
 
-        {/* Minimize/Restore Toggle Button */}
-        <button
-          onClick={handleMinimize}
-          className="w-7 h-6 hover:bg-gray-700/50 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
-          title="Minimize/Restore content window"
-        >
-          <Minus className="w-4 h-4" />
-        </button>
-        <button
-          onClick={onClose}
-          className="w-7 h-6 hover:bg-rose-600/70 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-600"
-          title="Close window and return to panel"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        {/* Window Control Buttons */}
+        <div className="flex justify-center items-center gap-1">
+          <button
+            onClick={handleMinimize}
+            className="w-7 h-6 hover:bg-gray-700/50 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
+            title="Minimize/Restore content window"
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleMaximize}
+            className="w-7 h-6 hover:bg-gray-700/50 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
+            title="Maximize/Unmaximize content window"
+          >
+            <Square strokeWidth="2" className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onClose}
+            className="w-7 h-6 hover:bg-rose-600/70 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-600"
+            title="Close window and return to panel"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
       </div>
     </div>

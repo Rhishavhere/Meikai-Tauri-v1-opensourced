@@ -16,10 +16,10 @@ async fn create_content_window(
         WebviewUrl::External(url.parse().map_err(|e| format!("Invalid URL: {:?}", e))?)
     )
     .title("Meikai Browser")
-    .inner_size(1200.0, 800.0)
+    .inner_size(1400.0, 800.0)
     .center() // Center on screen
     .resizable(true) // Fully resizable
-    .decorations(true) // Use native window decorations
+    .decorations(false) // Use native window decorations
     .build()
     .map_err(|e| e.to_string())?;
 
@@ -107,6 +107,26 @@ async fn minimize_browser_window(
     Ok(())
 }
 
+#[tauri::command]
+async fn toggle_maximize_browser_window(
+    app: tauri::AppHandle,
+    window_label: String,
+) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(&window_label) {
+        // Check if window is maximized
+        let is_maximized = window.is_maximized().map_err(|e| e.to_string())?;
+
+        if is_maximized {
+            // Unmaximize (restore) the window
+            window.unmaximize().map_err(|e| e.to_string())?;
+        } else {
+            // Maximize the window
+            window.maximize().map_err(|e| e.to_string())?;
+        }
+    }
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -119,7 +139,8 @@ pub fn run() {
             go_forward,
             reload_page,
             close_browser_window,
-            minimize_browser_window
+            minimize_browser_window,
+            toggle_maximize_browser_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
