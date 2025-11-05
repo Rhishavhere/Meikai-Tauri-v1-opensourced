@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, X } from 'lucide-react';
+import Tray from "./Tray";
 
 interface PanelProps {
   onNavigate: (url: string) => void;
@@ -47,7 +48,24 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   ];
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-white overflow-hidden">
+    <div className="h-screen w-screen flex flex-col overflow-hidden justify-center items-center">
+      {/* Background Logo */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="pointer-events-none -z-10 overflow-hidden inset-0 absolute flex justify-center"
+      >
+        <motion.img
+          src="logo.svg"
+          alt=""
+          className="w-[500px] h-auto opacity-50 -bottom-48 absolute"
+          initial={{ y: 20 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.5 }}
+        />
+      </motion.div>
+
       {/* Window Controls Bar */}
       <div className="flex fixed gap-1 right-4 top-2 justify-center items-center">
         <button
@@ -64,7 +82,9 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         </button>
       </div>
 
+
       {/* Main Content */}
+
       <div data-tauri-drag-region className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-2xl px-8">
           <motion.div
@@ -72,7 +92,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12 flex flex-col justify-center items-center"
           >
-            <p className="font-tangerine font-bold text-7xl text-amber-900">Meikai</p>
+            <p className="font-merri text-6xl text-[#ee8a93]">Meikai</p>
             <p className="text-gray-500 text-md font-poppins">
               Built for focus. Designed for flow
             </p>
@@ -92,7 +112,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 onFocus={(e) => e.target.select()}
-                className="w-96 h-10 px-6 py-2 bg-white rounded-xl text-base border border-black/30 focus:border-blue-400 focus:outline-none transition-all shadow-lg placeholder-gray-600"
+                className="w-96 h-10 px-6 py-2 bg-white rounded-xl hover:bg-white/50 backdrop-blur-lg text-base border border-black/30 focus:border-blue-400 focus:outline-none transition-all shadow-lg placeholder-gray-600"
                 placeholder="Search or enter URL"
                 autoFocus
               />
@@ -103,20 +123,22 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="flex text-xl gap-4 justify-center items-center"
+            className="flex text-xl gap-3 justify-center items-center"
           >
             {quickLinks.map((site) => (
               <button
                 key={site.name}
                 onClick={() => onQuickLink(site.url)}
-                className="p-2 bg-white backdrop-blur-md rounded-xl hover:shadow-xl hover:bg-white/30 transition-all border border-black/10 hover:border-blue-400"
+                className="p-2 bg-white backdrop-blur-md rounded-xl shadow-sm hover:shadow-md hover:bg-white/50 transition-all hover:border-blue-400"
               >
-                <div className="text-sm font-medium text-gray-800">{site.name}</div>
+                <div className="text-xs font-poppins text-gray-800">{site.name}</div>
               </button>
             ))}
           </motion.div>
         </div>
       </div>
+      {/* Tray */}
+      <Tray></Tray>
     </div>
   );
 }
