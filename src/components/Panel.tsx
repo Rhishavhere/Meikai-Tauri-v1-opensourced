@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, X } from 'lucide-react';
@@ -11,7 +11,9 @@ interface PanelProps {
 
 export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   const [url, setUrl] = useState("");
+  const [showTray, setShowTray] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +49,31 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
     { name: "Rhishav", url: "https://rhishav.com" },
   ];
 
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0) {
+        // Scrolling down
+        setShowTray(true);
+      } else if (e.deltaY < 0) {
+        // Scrolling up
+        setShowTray(false);
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []);
+
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden justify-center items-center">
+    <div ref={containerRef} className="h-screen w-screen flex flex-col overflow-hidden justify-center items-center">
       {/* Background Logo */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -138,7 +163,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         </div>
       </div>
       {/* Tray */}
-      <Tray></Tray>
+      <Tray isVisible={showTray} onQuickLink={onQuickLink} />
     </div>
   );
 }
