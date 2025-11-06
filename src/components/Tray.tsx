@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { Plus } from "lucide-react";
 
 
 interface TrayProps {
@@ -32,7 +33,7 @@ export default function Tray({ isVisible, onQuickLink }: TrayProps) {
           }}
           className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
         >
-          <div className="w-120 h-50 bg-white/70 backdrop-blur-md shadow-xl rounded-2xl p-4 border border-black/10 overflow-hidden">
+          <div className="w-120 h-50 bg-white/70 backdrop-blur-md flex justify-center items-baseline shadow-xl rounded-2xl p-4 border border-black/10 overflow-hidden">
             <div className="flex gap-3 flex-wrap justify-center items-center max-w-2xl">
               {additionalLinks.map((site) => (
                 <button
@@ -43,6 +44,23 @@ export default function Tray({ isVisible, onQuickLink }: TrayProps) {
                   <div className="text-xs font-poppins text-gray-800">{site.name}</div>
                 </button>
               ))}
+            </div>
+
+            {/* Add new link */}
+            <div className="absolute bottom-3 left-4 flex gap-2 justify-center items-center">
+              <div className="bg-transparent hover:bg-red-100 hover:border-red-300 border border-transparent transition-all p-0.5 rounded-xl flex justify-center items-center">
+                <Plus className="w-4 h-4 text-[#fd7e88]"></Plus>
+              </div>
+
+              <div className="flex justify-center">
+                <input
+                  type="text"
+                  value=""
+                  className="w-96 h-8 px-6 py-2 bg-white rounded-xl hover:bg-white/50 backdrop-blur-lg text-sm font-poppins shadow-md hover:shadow-lg border border-transparent focus:border-[#ee8a93] focus:outline-none transition-all placeholder-gray-600"
+                  placeholder="Add new link"
+                  autoFocus
+                />
+              </div>
             </div>
           </div>
         </motion.div>
@@ -61,6 +79,8 @@ export default function Tray({ isVisible, onQuickLink }: TrayProps) {
           <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-90 h-8 bg-white/70 shadow-xl shadow-black backdrop-blur-sm rounded-lg"></div>
         </motion.div>
       )}
+
+      
     </AnimatePresence>
   );
 }
