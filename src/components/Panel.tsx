@@ -154,7 +154,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
               <button
                 key={site.name}
                 onClick={() => onQuickLink(site.url)}
-                className="p-2 bg-white backdrop-blur-md rounded-xl shadow-sm hover:shadow-md hover:bg-white/50 transition-all hover:border-blue-400"
+                className="p-2 bg-white backdrop-blur-md rounded-xl shadow-sm hover:shadow-md hover:bg-white/50 transition-all hover:border-[#ee8a93] border border-transparent"
               >
                 <div className="text-xs font-poppins text-gray-800">{site.name}</div>
               </button>
