@@ -82,9 +82,9 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         className="pointer-events-none -z-10 overflow-hidden inset-0 absolute flex justify-center"
       >
         <motion.img
-          src="logo.svg"
+          src="background.jpg"
           alt=""
-          className="w-[500px] h-auto opacity-50 -bottom-48 absolute"
+          className="w-screen h-auto opacity-50 -bottom-40 absolute"
           initial={{ y: 20 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5 }}

@@ -20,13 +20,13 @@ export default function Tray({ isVisible, onQuickLink }: TrayProps) {
   ];
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="popLayout">
       {isVisible ? (
         <motion.div
           key="expanded-tray"
           initial={{ opacity: 1, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          exit={{ opacity: [1,0], y: 60, scale: 0.95 }}
           transition={{
             duration: 0.3,
             ease: [0.4, 0, 0.2, 1]
