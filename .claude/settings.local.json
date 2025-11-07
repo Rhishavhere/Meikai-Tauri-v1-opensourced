@@ -13,7 +13,12 @@
       "Bash(where:*)",
       "Bash(winget install:*)",
       "Bash(winget search:*)",
-      "Bash(reg query \"HKLM\\SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v3.5\" /v Install)"
+      "Bash(reg query \"HKLM\\SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v3.5\" /v Install)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill /PID 20576 /F)",
+      "Bash(taskkill /PID 24740 /F)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

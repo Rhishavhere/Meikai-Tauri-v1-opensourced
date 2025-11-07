@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ChevronLeft, ChevronRight, RotateCw, Home, X, Minus, Square } from 'lucide-react';
 
@@ -10,6 +10,29 @@ interface DockProps {
 
 export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
   const [url, setUrl] = useState(initialUrl);
+
+  // Poll for current URL from the content window
+  useEffect(() => {
+    if (!activeContentWindow) return;
+
+    const pollUrl = async () => {
+      try {
+        const currentUrl = await invoke<string>("get_current_url", {
+          windowLabel: activeContentWindow
+        });
+        if (currentUrl && currentUrl !== url) {
+          setUrl(currentUrl);
+        }
+      } catch (error) {
+        console.error("Failed to get current URL:", error);
+      }
+    };
+
+    // Poll every 500ms
+    const interval = setInterval(pollUrl, 500);
+
+    return () => clearInterval(interval);
+  }, [activeContentWindow]);
 
   const handleNavigate = async (e: React.FormEvent) => {
     e.preventDefault();

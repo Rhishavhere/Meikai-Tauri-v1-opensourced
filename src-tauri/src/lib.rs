@@ -127,6 +127,20 @@ async fn toggle_maximize_browser_window(
     Ok(())
 }
 
+#[tauri::command]
+async fn get_current_url(
+    app: tauri::AppHandle,
+    window_label: String,
+) -> Result<String, String> {
+    if let Some(window) = app.get_webview_window(&window_label) {
+        // Use with_webview to access the WebView and get the URL
+        let url = window.url().map_err(|e| e.to_string())?;
+        Ok(url.to_string())
+    } else {
+        Err("Window not found".to_string())
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -140,7 +154,8 @@ pub fn run() {
             reload_page,
             close_browser_window,
             minimize_browser_window,
-            toggle_maximize_browser_window
+            toggle_maximize_browser_window,
+            get_current_url
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
