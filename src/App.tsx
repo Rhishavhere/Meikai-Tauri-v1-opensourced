@@ -23,7 +23,7 @@ function App() {
       const x = (screenWidth - 700) / 2;
       await window.setPosition(new PhysicalPosition(x, 10));
       await window.setSize(new PhysicalSize(700, 40));
-      await window.setAlwaysOnTop(false);
+      await window.setAlwaysOnTop(true);
 
       console.log('Notch mode activated');
       setIsNotchMode(true);

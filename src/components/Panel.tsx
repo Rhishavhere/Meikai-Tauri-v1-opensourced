@@ -46,7 +46,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
     { name: "GitHub", url: "https://github.com" },
     { name: "Twitter", url: "https://twitter.com" },
     { name: "Apple", url: "https://apple.com" },
-    { name: "Rhishav", url: "https://rhishav.com" },
+    { name: "Pinterest", url: "https://pinterest.com" },
   ];
 
   useEffect(() => {
@@ -82,9 +82,9 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         className="pointer-events-none -z-10 overflow-hidden inset-0 absolute flex justify-center"
       >
         <motion.img
-          src="background.jpg"
+          src="logo.svg"
           alt=""
-          className="w-screen h-auto opacity-50 -bottom-40 absolute"
+          className="w-screen h-auto opacity-50 top-12 absolute"
           initial={{ y: 20 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5 }}
