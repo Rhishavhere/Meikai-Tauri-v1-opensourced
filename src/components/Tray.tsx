@@ -76,7 +76,7 @@ export default function Tray({ isVisible, onQuickLink }: TrayProps) {
           }}
           className="relative flex justify-center items-center"
         >
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-90 h-8 bg-white/70 shadow-xl shadow-black backdrop-blur-sm rounded-lg"></div>
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-16 h-1 bg-white/70 shadow-xl shadow-black backdrop-blur-sm rounded-lg"></div>
         </motion.div>
       )}
 
