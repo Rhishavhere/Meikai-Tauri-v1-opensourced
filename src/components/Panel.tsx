@@ -75,7 +75,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   return (
     <div ref={containerRef} className="h-screen w-screen flex flex-col overflow-hidden justify-center items-center">
       {/* Background Logo */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -89,7 +89,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
           animate={{ y: 0 }}
           transition={{ duration: 0.5 }}
         />
-      </motion.div>
+      </motion.div> */}
 
       {/* Window Controls Bar */}
       <div className="flex fixed gap-1 right-4 top-2 justify-center items-center">
