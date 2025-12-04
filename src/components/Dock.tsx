@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { ChevronLeft, ChevronRight, RotateCw, Home, X, Minus, Square, Plus, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCw, X, Minus, Square, Plus, Search } from 'lucide-react';
 
 interface DockProps {
   activeContentWindow: string | null;
   initialUrl: string;
   onClose: () => void;
+  onNewWindow: () => void;
 }
 
 interface UrlChangedPayload {
@@ -14,7 +15,7 @@ interface UrlChangedPayload {
   windowLabel: string;
 }
 
-export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
+export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow }: DockProps) {
   const [url, setUrl] = useState(initialUrl);
   const [isEditing, setIsEditing] = useState(false);
   const isEditingRef = useRef(isEditing);
@@ -106,7 +107,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
   };
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-full w-full flex flex-col bg-[#fff6ee]">
       {/* Dock Bar */}
       <div className="flex-1 flex items-center justify-between px-4 mt-1">
         {/* Left Group: Navigation Controls */}
@@ -133,6 +134,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
             <ChevronRight className="w-4 h-4" />
           </button>
           <button
+            onClick={onNewWindow}
             className="p-2 rounded hover:bg-gray-300 transition-colors"
             title="New Window"
           >
