@@ -96,39 +96,42 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
   return (
     <div className="h-full w-full flex flex-col">
       {/* Dock Bar */}
-      <div className="flex-1 flex items-center gap-2 px-4 mt-1">
+      <div className="flex-1 flex items-center gap-2 px-4 mt-1 justify-between">
         {/* Navigation Controls */}
-        <button
-          onClick={handleBack}
-          className="p-2 rounded hover:bg-gray-300 transition-colors"
-          title="Go back"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-        <button
-          onClick={handleForward}
-          className="p-2 rounded hover:bg-gray-300 transition-colors"
-          title="Go forward"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-        <button
-          onClick={handleReload}
-          className="p-2 rounded hover:bg-gray-300 transition-colors"
-          title="Reload"
-        >
-          <RotateCw className="w-4 h-4" />
-        </button>
-        <button
-          onClick={handleHome}
-          className="p-2 rounded hover:bg-gray-300 transition-colors"
-          title="Home"
-        >
-          <Home className="w-4 h-4" />
-        </button>
+        <div>
+
+          <button
+            onClick={handleBack}
+            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            title="Go back"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleForward}
+            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            title="Go forward"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleReload}
+            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            title="Reload"
+          >
+            <RotateCw className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleHome}
+            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            title="Home"
+          >
+            <Home className="w-4 h-4" />
+          </button>
+        </div>
 
         {/* URL Bar */}
-        <form onSubmit={handleNavigate} className="flex-1 mx-4">
+        {/* <form onSubmit={handleNavigate} className="flex-1 mx-4">
           <input
             type="text"
             value={url}
@@ -137,7 +140,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
             placeholder="Search or enter URL"
             className="w-full px-4 py-1 bg-gray-200 backdrop-blur-md rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
           />
-        </form>
+        </form> */}
 
         {/* Window Control Buttons */}
         <div className="flex justify-center items-center gap-1">
