@@ -1,4 +1,4 @@
-use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 
 #[tauri::command]
 async fn create_content_window(
@@ -141,6 +141,48 @@ async fn get_current_url(
     }
 }
 
+#[tauri::command]
+async fn setup_url_monitor(
+    app: tauri::AppHandle,
+    window_label: String,
+) -> Result<(), String> {
+    let app_handle = app.clone();
+    let label = window_label.clone();
+    
+    // Spawn a background task to monitor URL changes
+    std::thread::spawn(move || {
+        let mut last_url = String::new();
+        
+        loop {
+            // Check if window still exists
+            if let Some(window) = app_handle.get_webview_window(&label) {
+                if let Ok(current_url) = window.url() {
+                    let url_string = current_url.to_string();
+                    
+                    // Only emit if URL has changed
+                    if url_string != last_url {
+                        last_url = url_string.clone();
+                        
+                        // Emit event to all windows (the main window will receive it)
+                        let _ = app_handle.emit("url-changed", serde_json::json!({
+                            "url": url_string,
+                            "windowLabel": label
+                        }));
+                    }
+                }
+            } else {
+                // Window was closed, stop monitoring
+                break;
+            }
+            
+            // Poll every 300ms (more efficient than frontend polling)
+            std::thread::sleep(std::time::Duration::from_millis(300));
+        }
+    });
+    
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -155,7 +197,8 @@ pub fn run() {
             close_browser_window,
             minimize_browser_window,
             toggle_maximize_browser_window,
-            get_current_url
+            get_current_url,
+            setup_url_monitor
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

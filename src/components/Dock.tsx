@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { ChevronLeft, ChevronRight, RotateCw, Home, X, Minus, Square, Plus, Search } from 'lucide-react';
 
 interface DockProps {
@@ -8,35 +9,41 @@ interface DockProps {
   onClose: () => void;
 }
 
+interface UrlChangedPayload {
+  url: string;
+  windowLabel: string;
+}
+
 export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
   const [url, setUrl] = useState(initialUrl);
   const [isEditing, setIsEditing] = useState(false);
+  const isEditingRef = useRef(isEditing);
 
-  // Poll for current URL from the content window
+  // Keep ref in sync with state
+  useEffect(() => {
+    isEditingRef.current = isEditing;
+  }, [isEditing]);
+
+  // Set up URL monitor and listen for URL change events
   useEffect(() => {
     if (!activeContentWindow) return;
 
-    const pollUrl = async () => {
-      // Don't update URL while user is editing
-      if (isEditing) return;
+    // Set up the URL monitor in the content window
+    invoke("setup_url_monitor", { windowLabel: activeContentWindow })
+      .catch(err => console.error("Failed to setup URL monitor:", err));
 
-      try {
-        const currentUrl = await invoke<string>("get_current_url", {
-          windowLabel: activeContentWindow
-        });
-        if (currentUrl) {
-          setUrl(currentUrl);
-        }
-      } catch (error) {
-        console.error("Failed to get current URL:", error);
+    // Listen for URL change events
+    const unlistenPromise = listen<UrlChangedPayload>("url-changed", (event) => {
+      // Only update if it's from our content window and we're not editing
+      if (event.payload.windowLabel === activeContentWindow && !isEditingRef.current) {
+        setUrl(event.payload.url);
       }
+    });
+
+    return () => {
+      unlistenPromise.then(unlisten => unlisten());
     };
-
-    // Poll every 500ms
-    const interval = setInterval(pollUrl, 500);
-
-    return () => clearInterval(interval);
-  }, [activeContentWindow, isEditing]);
+  }, [activeContentWindow]); // Only re-run when content window changes
 
   const handleNavigate = async (e: React.FormEvent) => {
     e.preventDefault();
