@@ -107,9 +107,9 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow }: 
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-[#fff6ee]">
+    <div className="h-full w-full flex flex-col bg-[#fff6ee] rounded-3xl">
       {/* Dock Bar */}
-      <div className="flex-1 flex items-center justify-between px-4 mt-1">
+      <div className="flex-1 flex items-center justify-between px-4 p-1">
         {/* Left Group: Navigation Controls */}
         <div className="flex items-center gap-1">
           {/* <button
