@@ -17,10 +17,11 @@
         "width": 600,
         "height": 400,
         "decorations": false,
-        "transparent": false,
+        "transparent": true,
         "resizable": false,
         "fullscreen": false,
-        "center": true
+        "center": true,
+        "shadow": false
       }
     ],
     "security": {

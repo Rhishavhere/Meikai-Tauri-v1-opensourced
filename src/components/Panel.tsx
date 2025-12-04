@@ -73,7 +73,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-screen w-screen flex flex-col overflow-hidden justify-center items-center">
+    <div ref={containerRef} className="h-screen w-screen flex flex-col overflow-hidden justify-center items-center bg-[#fff6ee]">
       {/* Background Logo */}
       {/* <motion.div
         initial={{ opacity: 0 }}
