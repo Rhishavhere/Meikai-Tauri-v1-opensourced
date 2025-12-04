@@ -10,17 +10,21 @@ interface DockProps {
 
 export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
   const [url, setUrl] = useState(initialUrl);
+  const [isEditing, setIsEditing] = useState(false);
 
   // Poll for current URL from the content window
   useEffect(() => {
     if (!activeContentWindow) return;
 
     const pollUrl = async () => {
+      // Don't update URL while user is editing
+      if (isEditing) return;
+
       try {
         const currentUrl = await invoke<string>("get_current_url", {
           windowLabel: activeContentWindow
         });
-        if (currentUrl && currentUrl !== url) {
+        if (currentUrl) {
           setUrl(currentUrl);
         }
       } catch (error) {
@@ -32,7 +36,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
     const interval = setInterval(pollUrl, 500);
 
     return () => clearInterval(interval);
-  }, [activeContentWindow]);
+  }, [activeContentWindow, isEditing]);
 
   const handleNavigate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +57,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
     }
 
     await invoke("navigate_to_url", { windowLabel: activeContentWindow, url: fullUrl });
+    setIsEditing(false);
   };
 
   const handleBack = async () => {
@@ -145,8 +150,15 @@ export function Dock({ activeContentWindow, initialUrl, onClose }: DockProps) {
             <input
               type="text"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onFocus={(e) => e.target.select()}
+              onChange={(e) => {
+                setIsEditing(true);
+                setUrl(e.target.value);
+              }}
+              onFocus={(e) => {
+                setIsEditing(true);
+                e.target.select();
+              }}
+              onBlur={() => setIsEditing(false)}
               placeholder="Search or enter URL"
               className="w-full h-full pl-10 pr-4 py-1 bg-transparent focus:outline-none text-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
             />
