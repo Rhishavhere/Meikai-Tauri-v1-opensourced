@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getCurrentWindow, availableMonitors } from "@tauri-apps/api/window";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { PhysicalPosition, PhysicalSize } from '@tauri-apps/api/dpi';
 import { Panel, Dock, MiniPanel } from './components';
 
@@ -19,6 +20,19 @@ function App() {
   const activeContentWindow = contentWindows.length > 0 
     ? contentWindows[contentWindows.length - 1].windowLabel 
     : null;
+
+  // Listen for new windows created from redirect links (target="_blank", window.open)
+  useEffect(() => {
+    const unlisten = listen<{ windowLabel: string; url: string }>("new-window-created", (event) => {
+      const { windowLabel, url: newUrl } = event.payload;
+      setContentWindows(prev => [...prev, { windowLabel, url: newUrl }]);
+      setUrl(newUrl);
+    });
+
+    return () => {
+      unlisten.then(fn => fn());
+    };
+  }, []);
 
   const transformToNotch = async () => {
     const window = getCurrentWindow();

@@ -7,6 +7,7 @@ async fn create_content_window(
 ) -> Result<String, String> {
     let window_id = uuid::Uuid::new_v4().to_string();
     let content_label = format!("content-{}", window_id);
+    let app_handle = app.clone();
 
     // Create the content window (native WebView2 loading the actual URL)
     // Opens at center, fully resizable and draggable
@@ -20,6 +21,76 @@ async fn create_content_window(
     .center() // Center on screen
     .resizable(true) // Fully resizable
     .decorations(false) // Use native window decorations
+    .on_new_window(move |url, _features| {
+        // Handle window.open() and target="_blank" requests
+        let new_window_id = uuid::Uuid::new_v4().to_string();
+        let new_label = format!("content-{}", new_window_id);
+        let url_string = url.to_string();
+        let app_for_window = app_handle.clone();
+        let label_for_event = new_label.clone();
+        
+        // Clone app handle for the nested on_new_window handler
+        let app_for_nested = app_for_window.clone();
+        
+        // Build the new window for the redirect link
+        // Also add on_new_window handler so nested redirects work
+        let builder = WebviewWindowBuilder::new(
+            &app_for_window,
+            &new_label,
+            WebviewUrl::External(url.clone()),
+        )
+        .title("Meikai Browser")
+        .inner_size(1400.0, 800.0)
+        .center()
+        .resizable(true)
+        .decorations(false)
+        .on_new_window(move |nested_url, _nested_features| {
+            // Handle nested redirects recursively
+            let nested_window_id = uuid::Uuid::new_v4().to_string();
+            let nested_label = format!("content-{}", nested_window_id);
+            let nested_url_string = nested_url.to_string();
+            let nested_app = app_for_nested.clone();
+            let nested_label_for_event = nested_label.clone();
+            
+            let nested_builder = WebviewWindowBuilder::new(
+                &nested_app,
+                &nested_label,
+                WebviewUrl::External(nested_url.clone()),
+            )
+            .title("Meikai Browser")
+            .inner_size(1400.0, 800.0)
+            .center()
+            .resizable(true)
+            .decorations(false);
+            
+            match nested_builder.build() {
+                Ok(window) => {
+                    let _ = nested_app.emit("new-window-created", serde_json::json!({
+                        "windowLabel": nested_label_for_event,
+                        "url": nested_url_string
+                    }));
+                    tauri::webview::NewWindowResponse::Create { window }
+                }
+                Err(_) => tauri::webview::NewWindowResponse::Deny
+            }
+        });
+        
+        match builder.build() {
+            Ok(window) => {
+                // Emit event to frontend to track this new window
+                let _ = app_for_window.emit("new-window-created", serde_json::json!({
+                    "windowLabel": label_for_event,
+                    "url": url_string
+                }));
+                
+                tauri::webview::NewWindowResponse::Create { window }
+            }
+            Err(_) => {
+                // If window creation fails, deny the request
+                tauri::webview::NewWindowResponse::Deny
+            }
+        }
+    })
     .build()
     .map_err(|e| e.to_string())?;
 
