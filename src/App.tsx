@@ -14,25 +14,33 @@ function App() {
   const [url, setUrl] = useState("");
   const [isNotchMode, setIsNotchMode] = useState(false);
   const [contentWindows, setContentWindows] = useState<ContentWindow[]>([]);
+  const [activeWindowIndex, setActiveWindowIndex] = useState(0);
   const [showMiniPanel, setShowMiniPanel] = useState(false);
 
-  // Get the most recently opened window as "active"
+  // Get the actively selected window
   const activeContentWindow = contentWindows.length > 0 
-    ? contentWindows[contentWindows.length - 1].windowLabel 
+    ? contentWindows[activeWindowIndex]?.windowLabel 
     : null;
 
   // Listen for new windows created from redirect links (target="_blank", window.open)
   useEffect(() => {
-    const unlisten = listen<{ windowLabel: string; url: string }>("new-window-created", (event) => {
+    const unlisten = listen<{ windowLabel: string; url: string }>("new-window-created", async (event) => {
       const { windowLabel, url: newUrl } = event.payload;
+      
+      // Hide current active window before showing new one
+      if (contentWindows.length > 0 && contentWindows[activeWindowIndex]) {
+        await invoke("hide_browser_window", { windowLabel: contentWindows[activeWindowIndex].windowLabel });
+      }
+      
       setContentWindows(prev => [...prev, { windowLabel, url: newUrl }]);
+      setActiveWindowIndex(contentWindows.length); // New window becomes active (will be at the end)
       setUrl(newUrl);
     });
 
     return () => {
       unlisten.then(fn => fn());
     };
-  }, []);
+  }, [contentWindows, activeWindowIndex]);
 
   const transformToNotch = async () => {
     const window = getCurrentWindow();
@@ -66,12 +74,14 @@ function App() {
 
     setIsNotchMode(false);
     setContentWindows([]);
+    setActiveWindowIndex(0);
   };
 
   const handleNavigate = async (fullUrl: string) => {
     // Create new content window
     const windowLabel = await invoke<string>("create_content_window", { url: fullUrl });
     setContentWindows([{ windowLabel, url: fullUrl }]);
+    setActiveWindowIndex(0);
     setUrl(fullUrl);
 
     // Transform main window to notch
@@ -81,6 +91,7 @@ function App() {
   const handleQuickLink = async (siteUrl: string) => {
     const windowLabel = await invoke<string>("create_content_window", { url: siteUrl });
     setContentWindows([{ windowLabel, url: siteUrl }]);
+    setActiveWindowIndex(0);
     setUrl(siteUrl);
 
     // Transform main window to notch
@@ -97,13 +108,39 @@ function App() {
 
   // Handler for creating additional windows
   const handleCreateNewWindow = async (fullUrl: string) => {
-    const window = getCurrentWindow();
+    const appWindow = getCurrentWindow();
+    
+    // Hide current active window before creating new one
+    if (contentWindows.length > 0 && contentWindows[activeWindowIndex]) {
+      await invoke("hide_browser_window", { windowLabel: contentWindows[activeWindowIndex].windowLabel });
+    }
+    
     const windowLabel = await invoke<string>("create_content_window", { url: fullUrl });
-    setContentWindows(prev => [...prev, { windowLabel, url: fullUrl }]);
+    setContentWindows(prev => {
+      setActiveWindowIndex(prev.length); // Set to new window's index
+      return [...prev, { windowLabel, url: fullUrl }];
+    });
     setUrl(fullUrl);
     setShowMiniPanel(false);
     // Shrink dock back to notch size
-    await window.setSize(new PhysicalSize(700, 40));
+    await appWindow.setSize(new PhysicalSize(700, 40));
+  };
+
+  // Handler for switching between windows (tab-like behavior)
+  const handleSwitchWindow = async (index: number) => {
+    if (index === activeWindowIndex || index < 0 || index >= contentWindows.length) return;
+    
+    // Hide current active window
+    if (contentWindows[activeWindowIndex]) {
+      await invoke("hide_browser_window", { windowLabel: contentWindows[activeWindowIndex].windowLabel });
+    }
+    
+    // Show the selected window
+    if (contentWindows[index]) {
+      await invoke("show_browser_window", { windowLabel: contentWindows[index].windowLabel });
+      setActiveWindowIndex(index);
+      setUrl(contentWindows[index].url);
+    }
   };
 
   // Handler for closing MiniPanel without action
@@ -135,6 +172,9 @@ function App() {
         onClose={handleClose}
         onNewWindow={handleNewWindow}
         isMiniPanelOpen={showMiniPanel}
+        contentWindows={contentWindows}
+        activeWindowIndex={activeWindowIndex}
+        onSwitchWindow={handleSwitchWindow}
       />
       <MiniPanel 
         isVisible={showMiniPanel}

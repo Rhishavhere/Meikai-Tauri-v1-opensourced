@@ -148,6 +148,28 @@ async fn reload_page(
 }
 
 #[tauri::command]
+async fn show_browser_window(
+    app: tauri::AppHandle,
+    window_label: String,
+) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(&window_label) {
+        window.show().map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+async fn hide_browser_window(
+    app: tauri::AppHandle,
+    window_label: String,
+) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(&window_label) {
+        window.hide().map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
 async fn close_browser_window(
     app: tauri::AppHandle,
     window_label: String,
@@ -265,6 +287,8 @@ pub fn run() {
             go_back,
             go_forward,
             reload_page,
+            show_browser_window,
+            hide_browser_window,
             close_browser_window,
             minimize_browser_window,
             toggle_maximize_browser_window,

@@ -3,12 +3,20 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { ChevronLeft, ChevronRight, RotateCw, X, Minus, Square, Plus, Search } from 'lucide-react';
 
+interface ContentWindow {
+  windowLabel: string;
+  url: string;
+}
+
 interface DockProps {
   activeContentWindow: string | null;
   initialUrl: string;
   onClose: () => void;
   onNewWindow: () => void;
   isMiniPanelOpen?: boolean;
+  contentWindows: ContentWindow[];
+  activeWindowIndex: number;
+  onSwitchWindow: (index: number) => void;
 }
 
 interface UrlChangedPayload {
@@ -16,7 +24,7 @@ interface UrlChangedPayload {
   windowLabel: string;
 }
 
-export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, isMiniPanelOpen = false }: DockProps) {
+export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, isMiniPanelOpen = false, contentWindows, activeWindowIndex, onSwitchWindow }: DockProps) {
   const [url, setUrl] = useState(initialUrl);
   const [isEditing, setIsEditing] = useState(false);
   const isEditingRef = useRef(isEditing);
@@ -174,10 +182,30 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
               className="w-full h-full pl-10 pr-4 py-1 bg-transparent focus:outline-none text-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
             />
           </form>
-          <div className="flex gap-1 px-1 mr-2">
-            <div className="w-3 h-3 bg-red-300 rounded-full"></div>
-            <div className="w-3 h-3 bg-red-100 rounded-full"></div>
-            <div className="w-3 h-3 bg-red-100 rounded-full"></div>
+          <div 
+            className="flex gap-1 px-1 mr-2"
+            onWheel={(e) => {
+              e.preventDefault();
+              if (contentWindows.length <= 1) return;
+              
+              // Scroll down = next window, scroll up = previous window
+              const direction = e.deltaY > 0 ? 1 : -1;
+              const newIndex = Math.max(0, Math.min(contentWindows.length - 1, activeWindowIndex + direction));
+              if (newIndex !== activeWindowIndex) {
+                onSwitchWindow(newIndex);
+              }
+            }}
+          >
+            {contentWindows.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => onSwitchWindow(index)}
+                className={`w-3 h-3 rounded-full transition-colors hover:scale-110 ${
+                  index === activeWindowIndex ? 'bg-red-300' : 'bg-red-100 hover:bg-red-200'
+                }`}
+                title={`Window ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
 
