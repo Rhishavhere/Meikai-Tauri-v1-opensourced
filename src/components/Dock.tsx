@@ -183,7 +183,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
             />
           </form>
           <div 
-            className="flex gap-1 px-1 mr-2"
+            className="flex flex-1 gap-1 px-1 mr-2"
             onWheel={(e) => {
               e.preventDefault();
               if (contentWindows.length <= 1) return;
