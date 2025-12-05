@@ -8,6 +8,7 @@ interface DockProps {
   initialUrl: string;
   onClose: () => void;
   onNewWindow: () => void;
+  isMiniPanelOpen?: boolean;
 }
 
 interface UrlChangedPayload {
@@ -15,7 +16,7 @@ interface UrlChangedPayload {
   windowLabel: string;
 }
 
-export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow }: DockProps) {
+export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, isMiniPanelOpen = false }: DockProps) {
   const [url, setUrl] = useState(initialUrl);
   const [isEditing, setIsEditing] = useState(false);
   const isEditingRef = useRef(isEditing);
@@ -135,7 +136,8 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow }: 
           </button>
           <button
             onClick={onNewWindow}
-            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            disabled={isMiniPanelOpen}
+            className={`p-2 rounded transition-colors ${isMiniPanelOpen ? 'opacity-40' : 'hover:bg-gray-300'}`}
             title="New Window"
           >
             <Plus className="w-4 h-4" />

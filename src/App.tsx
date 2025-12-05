@@ -134,6 +134,7 @@ function App() {
         initialUrl={url} 
         onClose={handleClose}
         onNewWindow={handleNewWindow}
+        isMiniPanelOpen={showMiniPanel}
       />
       <MiniPanel 
         isVisible={showMiniPanel}
