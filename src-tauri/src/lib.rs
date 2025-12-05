@@ -1,4 +1,96 @@
-use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{Emitter, Manager, WebviewUrl, LogicalPosition, LogicalSize};
+use tauri::window::WindowBuilder;
+use tauri::webview::WebviewBuilder;
+
+const TITLE_BAR_HEIGHT: f64 = 40.0;
+const WINDOW_WIDTH: f64 = 1400.0;
+const WINDOW_HEIGHT: f64 = 800.0;
+
+// Helper function to create a content window with multi-webview (title bar + content)
+fn create_multi_webview_window(
+    app: &tauri::AppHandle,
+    window_label: &str,
+    titlebar_label: &str,
+    content_webview_label: &str,
+    url: &str,
+) -> Result<(), String> {
+    // Create the window without decorations
+    let window = WindowBuilder::new(app, window_label)
+        .title("Meikai Browser")
+        .inner_size(WINDOW_WIDTH, WINDOW_HEIGHT)
+        .center()
+        .resizable(true)
+        .decorations(false)
+        .build()
+        .map_err(|e| e.to_string())?;
+
+    // Get window size for positioning webviews
+    let window_size = window.inner_size().map_err(|e| e.to_string())?;
+    let width = window_size.width as f64;
+    let height = window_size.height as f64;
+
+    // Create title bar webview (loads from our React app with params)
+    let encoded_url = urlencoding::encode(url);
+    let titlebar_url = format!(
+        "http://localhost:1420/titlebar?windowLabel={}&url={}",
+        window_label, encoded_url
+    );
+    
+    let titlebar_webview = WebviewBuilder::new(
+        titlebar_label,
+        WebviewUrl::External(titlebar_url.parse().map_err(|e| format!("Invalid titlebar URL: {:?}", e))?)
+    );
+    
+    window.add_child(
+        titlebar_webview,
+        LogicalPosition::new(0.0, 0.0),
+        LogicalSize::new(width, TITLE_BAR_HEIGHT),
+    ).map_err(|e| e.to_string())?;
+
+    // Clone app handle for on_new_window handler
+    let app_for_handler = app.clone();
+    
+    // Create content webview (loads the external URL)
+    let content_webview = WebviewBuilder::new(
+        content_webview_label,
+        WebviewUrl::External(url.parse().map_err(|e| format!("Invalid URL: {:?}", e))?)
+    ).on_new_window(move |new_url, _features| {
+        // Handle window.open() and target="_blank" requests
+        let new_window_id = uuid::Uuid::new_v4().to_string();
+        let new_window_label = format!("window-{}", new_window_id);
+        let new_titlebar_label = format!("titlebar-{}", new_window_id);
+        let new_content_label = format!("content-{}", new_window_id);
+        let url_string = new_url.to_string();
+        let app_clone = app_for_handler.clone();
+        let label_for_event = new_content_label.clone();
+        
+        match create_multi_webview_window(
+            &app_clone,
+            &new_window_label,
+            &new_titlebar_label,
+            &new_content_label,
+            &url_string,
+        ) {
+            Ok(_) => {
+                // Emit event to frontend to track this new window
+                let _ = app_clone.emit("new-window-created", serde_json::json!({
+                    "windowLabel": label_for_event,
+                    "url": url_string
+                }));
+                tauri::webview::NewWindowResponse::Deny
+            }
+            Err(_) => tauri::webview::NewWindowResponse::Deny
+        }
+    });
+    
+    window.add_child(
+        content_webview,
+        LogicalPosition::new(0.0, TITLE_BAR_HEIGHT),
+        LogicalSize::new(width, height - TITLE_BAR_HEIGHT),
+    ).map_err(|e| e.to_string())?;
+
+    Ok(())
+}
 
 #[tauri::command]
 async fn create_content_window(
@@ -6,95 +98,19 @@ async fn create_content_window(
     url: String,
 ) -> Result<String, String> {
     let window_id = uuid::Uuid::new_v4().to_string();
+    let window_label = format!("window-{}", window_id);
+    let titlebar_label = format!("titlebar-{}", window_id);
     let content_label = format!("content-{}", window_id);
-    let app_handle = app.clone();
 
-    // Create the content window (native WebView2 loading the actual URL)
-    // Opens at center, fully resizable and draggable
-    WebviewWindowBuilder::new(
+    create_multi_webview_window(
         &app,
+        &window_label,
+        &titlebar_label,
         &content_label,
-        WebviewUrl::External(url.parse().map_err(|e| format!("Invalid URL: {:?}", e))?)
-    )
-    .title("Meikai Browser")
-    .inner_size(1400.0, 800.0)
-    .center() // Center on screen
-    .resizable(true) // Fully resizable
-    .decorations(true)
-    .on_new_window(move |url, _features| {
-        // Handle window.open() and target="_blank" requests
-        let new_window_id = uuid::Uuid::new_v4().to_string();
-        let new_label = format!("content-{}", new_window_id);
-        let url_string = url.to_string();
-        let app_for_window = app_handle.clone();
-        let label_for_event = new_label.clone();
-        
-        // Clone app handle for the nested on_new_window handler
-        let app_for_nested = app_for_window.clone();
-        
-        // Build the new window for the redirect link
-        // Also add on_new_window handler so nested redirects work
-        let builder = WebviewWindowBuilder::new(
-            &app_for_window,
-            &new_label,
-            WebviewUrl::External(url.clone()),
-        )
-        .title("Meikai Browser")
-        .inner_size(1400.0, 800.0)
-        .center()
-        .resizable(true)
-        .decorations(false)
-        .on_new_window(move |nested_url, _nested_features| {
-            // Handle nested redirects recursively
-            let nested_window_id = uuid::Uuid::new_v4().to_string();
-            let nested_label = format!("content-{}", nested_window_id);
-            let nested_url_string = nested_url.to_string();
-            let nested_app = app_for_nested.clone();
-            let nested_label_for_event = nested_label.clone();
-            
-            let nested_builder = WebviewWindowBuilder::new(
-                &nested_app,
-                &nested_label,
-                WebviewUrl::External(nested_url.clone()),
-            )
-            .title("Meikai Browser")
-            .inner_size(1400.0, 800.0)
-            .center()
-            .resizable(true)
-            .decorations(false);
-            
-            match nested_builder.build() {
-                Ok(window) => {
-                    let _ = nested_app.emit("new-window-created", serde_json::json!({
-                        "windowLabel": nested_label_for_event,
-                        "url": nested_url_string
-                    }));
-                    tauri::webview::NewWindowResponse::Create { window }
-                }
-                Err(_) => tauri::webview::NewWindowResponse::Deny
-            }
-        });
-        
-        match builder.build() {
-            Ok(window) => {
-                // Emit event to frontend to track this new window
-                let _ = app_for_window.emit("new-window-created", serde_json::json!({
-                    "windowLabel": label_for_event,
-                    "url": url_string
-                }));
-                
-                tauri::webview::NewWindowResponse::Create { window }
-            }
-            Err(_) => {
-                // If window creation fails, deny the request
-                tauri::webview::NewWindowResponse::Deny
-            }
-        }
-    })
-    .build()
-    .map_err(|e| e.to_string())?;
+        &url,
+    )?;
 
-    // Return the window label so frontend can track it
+    // Return the content webview label so frontend can track it
     Ok(content_label)
 }
 
@@ -152,7 +168,15 @@ async fn show_browser_window(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
+    // The window_label is like "content-xxx", but the actual window is "window-xxx"
+    // Derive the parent window label from the content webview label
+    let parent_label = if window_label.starts_with("content-") {
+        format!("window-{}", window_label.trim_start_matches("content-"))
+    } else {
+        window_label.clone()
+    };
+    
+    if let Some(window) = app.get_window(&parent_label) {
         window.show().map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -163,7 +187,15 @@ async fn hide_browser_window(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
+    // The window_label is like "content-xxx", but the actual window is "window-xxx"
+    // Derive the parent window label from the content webview label
+    let parent_label = if window_label.starts_with("content-") {
+        format!("window-{}", window_label.trim_start_matches("content-"))
+    } else {
+        window_label.clone()
+    };
+    
+    if let Some(window) = app.get_window(&parent_label) {
         window.hide().map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -174,7 +206,14 @@ async fn close_browser_window(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
+    // The window_label is like "content-xxx", but the actual window is "window-xxx"
+    let parent_label = if window_label.starts_with("content-") {
+        format!("window-{}", window_label.trim_start_matches("content-"))
+    } else {
+        window_label.clone()
+    };
+    
+    if let Some(window) = app.get_window(&parent_label) {
         window.close().map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -185,7 +224,14 @@ async fn minimize_browser_window(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
+    // The window_label is like "content-xxx", but the actual window is "window-xxx"
+    let parent_label = if window_label.starts_with("content-") {
+        format!("window-{}", window_label.trim_start_matches("content-"))
+    } else {
+        window_label.clone()
+    };
+    
+    if let Some(window) = app.get_window(&parent_label) {
         // Check if window is minimized
         let is_minimized = window.is_minimized().map_err(|e| e.to_string())?;
 
@@ -205,7 +251,14 @@ async fn toggle_maximize_browser_window(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
+    // The window_label is like "content-xxx", but the actual window is "window-xxx"
+    let parent_label = if window_label.starts_with("content-") {
+        format!("window-{}", window_label.trim_start_matches("content-"))
+    } else {
+        window_label.clone()
+    };
+    
+    if let Some(window) = app.get_window(&parent_label) {
         // Check if window is maximized
         let is_maximized = window.is_maximized().map_err(|e| e.to_string())?;
 
@@ -276,6 +329,45 @@ async fn setup_url_monitor(
     Ok(())
 }
 
+// Title bar commands - these control the parent window from the title bar webview
+#[tauri::command]
+async fn titlebar_minimize(app: tauri::AppHandle, window_label: String) -> Result<(), String> {
+    // window_label is like "window-xxx", get the actual window
+    if let Some(window) = app.get_window(&window_label) {
+        window.minimize().map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+async fn titlebar_maximize(app: tauri::AppHandle, window_label: String) -> Result<(), String> {
+    if let Some(window) = app.get_window(&window_label) {
+        let is_maximized = window.is_maximized().map_err(|e| e.to_string())?;
+        if is_maximized {
+            window.unmaximize().map_err(|e| e.to_string())?;
+        } else {
+            window.maximize().map_err(|e| e.to_string())?;
+        }
+    }
+    Ok(())
+}
+
+#[tauri::command]
+async fn titlebar_close(app: tauri::AppHandle, window_label: String) -> Result<(), String> {
+    if let Some(window) = app.get_window(&window_label) {
+        window.close().map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+async fn titlebar_drag(app: tauri::AppHandle, window_label: String) -> Result<(), String> {
+    if let Some(window) = app.get_window(&window_label) {
+        window.start_dragging().map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -293,17 +385,55 @@ pub fn run() {
             minimize_browser_window,
             toggle_maximize_browser_window,
             get_current_url,
-            setup_url_monitor
+            setup_url_monitor,
+            titlebar_minimize,
+            titlebar_maximize,
+            titlebar_close,
+            titlebar_drag
         ])
         .on_window_event(|window, event| {
-            if let tauri::WindowEvent::Destroyed = event {
-                let label = window.label().to_string();
-                // Only emit for content windows
-                if label.starts_with("content-") {
-                    let _ = window.emit("window-closed", serde_json::json!({
-                        "windowLabel": label
-                    }));
+            match event {
+                tauri::WindowEvent::Destroyed => {
+                    let label = window.label().to_string();
+                    // Emit for window- prefixed windows (multi-webview windows)
+                    if label.starts_with("window-") {
+                        // Extract the ID and emit with the content webview label
+                        let id = label.trim_start_matches("window-");
+                        let content_label = format!("content-{}", id);
+                        let _ = window.emit("window-closed", serde_json::json!({
+                            "windowLabel": content_label
+                        }));
+                    }
                 }
+                tauri::WindowEvent::Resized(size) => {
+                    let label = window.label().to_string();
+                    // Handle resize for multi-webview windows
+                    if label.starts_with("window-") {
+                        let id = label.trim_start_matches("window-");
+                        let titlebar_label = format!("titlebar-{}", id);
+                        let content_label = format!("content-{}", id);
+                        
+                        let width = size.width as f64;
+                        let height = size.height as f64;
+                        
+                        // Update title bar webview bounds
+                        if let Some(titlebar) = window.app_handle().get_webview(&titlebar_label) {
+                            let _ = titlebar.set_bounds(tauri::Rect {
+                                position: LogicalPosition::new(0.0, 0.0).into(),
+                                size: LogicalSize::new(width, TITLE_BAR_HEIGHT).into(),
+                            });
+                        }
+                        
+                        // Update content webview bounds
+                        if let Some(content) = window.app_handle().get_webview(&content_label) {
+                            let _ = content.set_bounds(tauri::Rect {
+                                position: LogicalPosition::new(0.0, TITLE_BAR_HEIGHT).into(),
+                                size: LogicalSize::new(width, height - TITLE_BAR_HEIGHT).into(),
+                            });
+                        }
+                    }
+                }
+                _ => {}
             }
         })
         .run(tauri::generate_context!())
