@@ -42,6 +42,52 @@ function App() {
     };
   }, [contentWindows, activeWindowIndex]);
 
+  // Listen for windows being closed (user clicks X on window title bar)
+  useEffect(() => {
+    const unlisten = listen<{ windowLabel: string }>("window-closed", async (event) => {
+      const closedLabel = event.payload.windowLabel;
+      
+      // Check if this is one of our content windows
+      const closedIndex = contentWindows.findIndex(w => w.windowLabel === closedLabel);
+      if (closedIndex === -1) return; // Not a content window we're tracking
+      
+      // Remove the closed window from our list
+      const newWindows = contentWindows.filter((_, i) => i !== closedIndex);
+      
+      if (newWindows.length === 0) {
+        // No more windows, go back to panel mode
+        const appWindow = getCurrentWindow();
+        setUrl("");
+        await appWindow.setAlwaysOnTop(false);
+        await appWindow.setSize(new PhysicalSize(600, 400));
+        await appWindow.center();
+        setIsNotchMode(false);
+        setContentWindows([]);
+        setActiveWindowIndex(0);
+      } else {
+        // Calculate new active index
+        let newActiveIndex = activeWindowIndex;
+        if (closedIndex === activeWindowIndex) {
+          // Closed window was active, switch to another
+          newActiveIndex = Math.min(closedIndex, newWindows.length - 1);
+          // Show the new active window
+          await invoke("show_browser_window", { windowLabel: newWindows[newActiveIndex].windowLabel });
+          setUrl(newWindows[newActiveIndex].url);
+        } else if (closedIndex < activeWindowIndex) {
+          // Closed window was before active, adjust index
+          newActiveIndex = activeWindowIndex - 1;
+        }
+        
+        setContentWindows(newWindows);
+        setActiveWindowIndex(newActiveIndex);
+      }
+    });
+
+    return () => {
+      unlisten.then(fn => fn());
+    };
+  }, [contentWindows, activeWindowIndex]);
+
   const transformToNotch = async () => {
     const window = getCurrentWindow();
     const monitors = await availableMonitors();

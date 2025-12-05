@@ -20,7 +20,7 @@ async fn create_content_window(
     .inner_size(1400.0, 800.0)
     .center() // Center on screen
     .resizable(true) // Fully resizable
-    .decorations(false) // Use native window decorations
+    .decorations(true)
     .on_new_window(move |url, _features| {
         // Handle window.open() and target="_blank" requests
         let new_window_id = uuid::Uuid::new_v4().to_string();
@@ -295,6 +295,17 @@ pub fn run() {
             get_current_url,
             setup_url_monitor
         ])
+        .on_window_event(|window, event| {
+            if let tauri::WindowEvent::Destroyed = event {
+                let label = window.label().to_string();
+                // Only emit for content windows
+                if label.starts_with("content-") {
+                    let _ = window.emit("window-closed", serde_json::json!({
+                        "windowLabel": label
+                    }));
+                }
+            }
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
