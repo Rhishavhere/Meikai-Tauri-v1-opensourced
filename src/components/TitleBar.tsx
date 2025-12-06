@@ -64,7 +64,7 @@ function TitleBar({ windowLabel, initialUrl }: TitleBarProps) {
 
   return (
     <div 
-      className="flex items-center justify-between h-10 bg-gradient-to-b from-[#1a1a2e] to-[#16213e] border-b border-white/10 select-none font-poppins"
+      className="flex items-center justify-between h-[20px] bg-white select-none font-poppins"
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
     >
@@ -74,9 +74,8 @@ function TitleBar({ windowLabel, initialUrl }: TitleBarProps) {
         data-drag-region="true"
       >
         <div className="flex items-center gap-2" data-drag-region="true">
-          <span className="text-base" data-drag-region="true">🌊</span>
           <span 
-            className="text-[13px] font-medium text-white/85 max-w-[300px] overflow-hidden text-ellipsis whitespace-nowrap"
+            className="text-[10px] tracking-widest font-medium text-white/50 max-w-[300px] overflow-hidden text-ellipsis whitespace-nowrap"
             data-drag-region="true"
           >
             {pageTitle}
@@ -85,33 +84,24 @@ function TitleBar({ windowLabel, initialUrl }: TitleBarProps) {
       </div>
 
       {/* Window controls - right side */}
-      <div className="flex h-full">
+      <div className="flex h-full mr-2 gap-2">
         <button 
-          className="w-[46px] h-full flex items-center justify-center border-none bg-transparent text-white/70 cursor-pointer transition-all duration-150 hover:bg-white/10 hover:text-white/95"
           onClick={handleMinimize}
           title="Minimize"
         >
-          <svg className="w-2.5 h-2.5" viewBox="0 0 12 12">
-            <rect y="5" width="12" height="2" fill="currentColor" />
-          </svg>
+          <div className="w-8 h-2 bg-orange-200 hover:bg-orange-300 rounded-full"></div>
         </button>
         <button 
-          className="w-[46px] h-full flex items-center justify-center border-none bg-transparent text-white/70 cursor-pointer transition-all duration-150 hover:bg-white/10 hover:text-white/95"
           onClick={handleMaximize}
           title="Maximize"
         >
-          <svg className="w-2.5 h-2.5" viewBox="0 0 12 12">
-            <rect x="1" y="1" width="10" height="10" stroke="currentColor" strokeWidth="2" fill="none" />
-          </svg>
+          <div className="w-8 h-2 bg-green-200 hover:bg-green-300 rounded-full"></div>
         </button>
         <button 
-          className="w-[46px] h-full flex items-center justify-center border-none bg-transparent text-white/70 cursor-pointer transition-all duration-150 hover:bg-[#e81123] hover:text-white"
           onClick={handleClose}
           title="Close"
         >
-          <svg className="w-2.5 h-2.5" viewBox="0 0 12 12">
-            <path d="M1 1L11 11M1 11L11 1" stroke="currentColor" strokeWidth="2" />
-          </svg>
+          <div className="w-8 h-2 bg-red-300 hover:bg-red-400 rounded-full"></div>
         </button>
       </div>
     </div>

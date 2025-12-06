@@ -2,7 +2,7 @@ use tauri::{Emitter, Manager, WebviewUrl, LogicalPosition, LogicalSize};
 use tauri::window::WindowBuilder;
 use tauri::webview::WebviewBuilder;
 
-const TITLE_BAR_HEIGHT: f64 = 40.0;
+const TITLE_BAR_HEIGHT: f64 = 20.0;
 const WINDOW_WIDTH: f64 = 1400.0;
 const WINDOW_HEIGHT: f64 = 800.0;
 
