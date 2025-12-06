@@ -21,11 +21,16 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
+      - name: Install app dependencies
+        working-directory: src-tauri
+        run: |
+          cargo install tauri-cli
+
       - name: Build Tauri (macOS)
         run: npm run tauri build
 
-      - name: Upload build output
+      - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macos-tauri-build
+          name: macos-app
           path: src-tauri/target/release/bundle/
