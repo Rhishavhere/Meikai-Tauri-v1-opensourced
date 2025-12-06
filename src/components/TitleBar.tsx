@@ -64,7 +64,7 @@ function TitleBar({ windowLabel, initialUrl }: TitleBarProps) {
 
   return (
     <div 
-      className="flex items-center justify-between h-[20px] bg-white select-none font-poppins"
+      className="flex items-center justify-between h-[20px] bg-[#101010] select-none font-poppins"
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
     >
@@ -123,7 +123,7 @@ export default function TitleBarPage() {
   }, []);
 
   if (!windowLabel) {
-    return <div className="flex items-center justify-between h-10 bg-gradient-to-b from-[#1a1a2e] to-[#16213e] border-b border-white/10 select-none font-poppins">Loading...</div>;
+    return <div className="flex items-center justify-between h-[20px]"/>
   }
 
   return <TitleBar windowLabel={windowLabel} initialUrl={url} />;
