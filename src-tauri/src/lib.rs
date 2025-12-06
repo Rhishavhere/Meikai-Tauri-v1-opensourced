@@ -120,8 +120,9 @@ async fn navigate_to_url(
     window_label: String,
     url: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
-        window.eval(&format!("window.location.href = '{}'", url))
+    // Use get_webview for child webviews in multi-webview architecture
+    if let Some(webview) = app.get_webview(&window_label) {
+        webview.eval(&format!("window.location.href = '{}'", url))
             .map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -132,8 +133,9 @@ async fn go_back(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
-        window.eval("window.history.back()")
+    // Use get_webview for child webviews in multi-webview architecture
+    if let Some(webview) = app.get_webview(&window_label) {
+        webview.eval("window.history.back()")
             .map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -144,8 +146,9 @@ async fn go_forward(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
-        window.eval("window.history.forward()")
+    // Use get_webview for child webviews in multi-webview architecture
+    if let Some(webview) = app.get_webview(&window_label) {
+        webview.eval("window.history.forward()")
             .map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -156,8 +159,9 @@ async fn reload_page(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<(), String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
-        window.eval("window.location.reload()")
+    // Use get_webview for child webviews in multi-webview architecture
+    if let Some(webview) = app.get_webview(&window_label) {
+        webview.eval("window.location.reload()")
             .map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -278,12 +282,12 @@ async fn get_current_url(
     app: tauri::AppHandle,
     window_label: String,
 ) -> Result<String, String> {
-    if let Some(window) = app.get_webview_window(&window_label) {
-        // Use with_webview to access the WebView and get the URL
-        let url = window.url().map_err(|e| e.to_string())?;
+    // Use get_webview for child webviews in multi-webview architecture
+    if let Some(webview) = app.get_webview(&window_label) {
+        let url = webview.url().map_err(|e| e.to_string())?;
         Ok(url.to_string())
     } else {
-        Err("Window not found".to_string())
+        Err("Webview not found".to_string())
     }
 }
 
@@ -300,9 +304,9 @@ async fn setup_url_monitor(
         let mut last_url = String::new();
         
         loop {
-            // Check if window still exists
-            if let Some(window) = app_handle.get_webview_window(&label) {
-                if let Ok(current_url) = window.url() {
+            // Check if webview still exists (use get_webview for child webviews)
+            if let Some(webview) = app_handle.get_webview(&label) {
+                if let Ok(current_url) = webview.url() {
                     let url_string = current_url.to_string();
                     
                     // Only emit if URL has changed
