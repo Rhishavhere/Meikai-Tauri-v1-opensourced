@@ -31,7 +31,7 @@ export default function Tray({ isVisible, onQuickLink }: TrayProps) {
             duration: 0.3,
             ease: [0.4, 0, 0.2, 1]
           }}
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+          className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50"
         >
           <div className="w-120 h-50 bg-white/70 backdrop-blur-md flex justify-center items-baseline shadow-xl rounded-2xl p-4 border border-black/10 overflow-hidden">
             <div className="flex gap-3 flex-wrap justify-center items-center max-w-2xl">
@@ -76,7 +76,7 @@ export default function Tray({ isVisible, onQuickLink }: TrayProps) {
           }}
           className="relative flex justify-center items-center"
         >
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-16 h-1 bg-white/70 shadow-xl shadow-black backdrop-blur-sm rounded-lg"></div>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 bg-[#ee8a93] shadow-xl shadow-black backdrop-blur-sm rounded-lg"></div>
         </motion.div>
       )}
 
