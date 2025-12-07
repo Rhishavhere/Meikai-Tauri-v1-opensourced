@@ -200,7 +200,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
       </div>
 
       {/* Utility Section */}
-      <div className="flex justify-center h-16 items-center gap-6 text-white pb-6 bg-transparent w-full">
+      <div className="flex justify-center h-10 pt-1 items-center gap-6 text-white bg-transparent w-full">
         {[
           { icon: Settings, label: "Settings", view: "settings" },
           { icon: User, label: "Profile", view: "profile" },
@@ -210,10 +210,10 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
           <button
             key={item.label}
             onClick={() => setActiveView(item.view as any)}
-            className={`p-3 rounded-full hover:bg-white/20 hover:scale-110 transition-all duration-300 group relative ${activeView === item.view ? 'bg-white/30' : ''}`}
+            className={`p-1 rounded-full hover:bg-white/20 hover:scale-110 transition-all duration-300 group relative ${activeView === item.view ? 'bg-white/30' : ''}`}
             title={item.label}
           >
-            <item.icon className="w-6 h-6 text-white/90 group-hover:text-white" strokeWidth={1.5} />
+            <item.icon className="w-5 h-5 text-white/90 group-hover:text-white" strokeWidth={2} />
           </button>
         ))}
       </div>
