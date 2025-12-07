@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Minus, X, Settings, User, LayoutGrid, BookOpen, Home } from "lucide-react";
+import { Minus, X, Settings, User, Home } from "lucide-react";
 
 // Tab Components
 import HomeTab from "./HomeTab";
@@ -105,9 +105,14 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         </div>
 
         {/* Tray - only visible on home tab */}
-        {activeView === "home" && (
+        {/* {activeView === "home" && (
           <Tray isVisible={showTray} onQuickLink={onQuickLink} />
-        )}
+        )} */}
+      </div>
+      
+      {/* Tray section */}
+      <div className="w-full h-0 bg-white/20">
+
       </div>
 
       {/* Bottom Tab Bar */}
