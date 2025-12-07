@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Minus, X, Settings, User, LayoutGrid, BookOpen, ArrowLeft } from 'lucide-react';
+import { Minus, X, Settings, User, LayoutGrid, BookOpen, Home } from 'lucide-react';
 import Tray from "./Tray";
 
 interface PanelProps {
@@ -51,6 +51,11 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   ];
 
   useEffect(() => {
+    if (activeView !== 'home') {
+      setShowTray(false);
+      return;
+    }
+
     const handleWheel = (e: WheelEvent) => {
       if (e.deltaY > 0) {
         // Scrolling down
@@ -71,7 +76,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         container.removeEventListener('wheel', handleWheel);
       }
     };
-  }, []);
+  }, [activeView]);
 
   const renderContent = () => {
     if (activeView === 'home') {
@@ -145,14 +150,6 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         exit={{ opacity: 0, scale: 0.95 }}
         className="w-full max-w-2xl px-8 h-full flex flex-col pt-12"
       >
-         <button
-            onClick={() => setActiveView('home')}
-            className="self-start mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
-          </button>
-        
         <div className="bg-white/50 backdrop-blur-xl rounded-2xl p-8 flex-1 shadow-sm border border-white/20">
             <div className="flex items-center gap-3 mb-6">
                 <currentView.icon className="w-8 h-8 text-[#ee8a93]" />
@@ -196,12 +193,13 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
             {renderContent()}
         </div>
         {/* Tray */}
-        <Tray isVisible={showTray} onQuickLink={onQuickLink} />
+        {activeView === 'home' && <Tray isVisible={showTray} onQuickLink={onQuickLink} />}
       </div>
 
       {/* Utility Section */}
       <div className="flex justify-center h-10 pt-1 items-center gap-6 text-white bg-transparent w-full">
         {[
+          { icon: Home, label: "Home", view: "home" },
           { icon: Settings, label: "Settings", view: "settings" },
           { icon: User, label: "Profile", view: "profile" },
           { icon: LayoutGrid, label: "Apps", view: "apps" },
