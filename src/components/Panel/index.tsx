@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, X, Settings, User, Home } from "lucide-react";
@@ -7,7 +7,7 @@ import { Minus, X, Settings, User, Home } from "lucide-react";
 import HomeTab from "./HomeTab";
 import SettingsTab from "./SettingsTab";
 import ProfileTab from "./ProfileTab";
-import Tray from "./Tray";
+// import Tray from "./Tray";
 
 interface PanelProps {
   onNavigate: (url: string) => void;
@@ -17,38 +17,38 @@ interface PanelProps {
 type TabView = "home" | "settings" | "profile" | "apps" | "library";
 
 export function Panel({ onNavigate, onQuickLink }: PanelProps) {
-  const [showTray, setShowTray] = useState(false);
+  // const [showTray, setShowTray] = useState(false);
   const [activeView, setActiveView] = useState<TabView>("home");
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle scroll to show/hide tray (only on home tab)
-  useEffect(() => {
-    if (activeView !== "home") {
-      setShowTray(false);
-      return;
-    }
+  // useEffect(() => {
+  //   if (activeView !== "home") {
+  //     setShowTray(false);
+  //     return;
+  //   }
 
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0) {
-        // Scrolling down
-        setShowTray(true);
-      } else if (e.deltaY < 0) {
-        // Scrolling up
-        setShowTray(false);
-      }
-    };
+  //   const handleWheel = (e: WheelEvent) => {
+  //     if (e.deltaY > 0) {
+  //       // Scrolling down
+  //       setShowTray(true);
+  //     } else if (e.deltaY < 0) {
+  //       // Scrolling up
+  //       setShowTray(false);
+  //     }
+  //   };
 
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("wheel", handleWheel);
-    }
+  //   const container = containerRef.current;
+  //   if (container) {
+  //     container.addEventListener("wheel", handleWheel);
+  //   }
 
-    return () => {
-      if (container) {
-        container.removeEventListener("wheel", handleWheel);
-      }
-    };
-  }, [activeView]);
+  //   return () => {
+  //     if (container) {
+  //       container.removeEventListener("wheel", handleWheel);
+  //     }
+  //   };
+  // }, [activeView]);
 
   const renderTabContent = () => {
     switch (activeView) {

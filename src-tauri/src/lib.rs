@@ -30,16 +30,21 @@ fn create_multi_webview_window(
     let height = window_size.height as f64;
 
     // Create title bar webview (loads from our React app with params)
+    // Create title bar webview (loads from our React app with params)
     let encoded_url = urlencoding::encode(url);
-    let titlebar_url = format!(
-        "http://localhost:1420/titlebar?windowLabel={}&url={}",
+    
+    // Valid for both dev (localhost) and build (tauri://)
+    // We inject a script to set the route and params before the app loads
+    let init_script = format!(
+        "window.history.replaceState({{}}, '', '/titlebar?windowLabel={}&url={}');",
         window_label, encoded_url
     );
-    
+
     let titlebar_webview = WebviewBuilder::new(
         titlebar_label,
-        WebviewUrl::External(titlebar_url.parse().map_err(|e| format!("Invalid titlebar URL: {:?}", e))?)
-    );
+        WebviewUrl::App("index.html".into())
+    )
+    .initialization_script(&init_script);
     
     window.add_child(
         titlebar_webview,
