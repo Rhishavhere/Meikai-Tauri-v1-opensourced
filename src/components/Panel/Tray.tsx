@@ -73,14 +73,26 @@ export default function Tray({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ y: "100%" }}
-          animate={{ y: 0 }}
-          exit={{ y: "100%" }}
-          transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          className="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center justify-end pointer-events-none"
+          key="tray-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-end pointer-events-none"
         >
+            {/* Click-outside backdrop */}
+            <div 
+              className="absolute inset-0 pointer-events-auto"
+              onClick={onClose} 
+            />
+
             {/* Glass Sheet */}
-            <div className="w-full max-w-2xl bg-[var(--color-bg-glass)] backdrop-blur-3xl border-t border-[var(--color-border)] shadow-[var(--shadow-md)] rounded-t-3xl pointer-events-auto overflow-hidden flex flex-col max-h-[85vh]">
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="w-full max-w-2xl bg-[var(--color-bg-glass)] backdrop-blur-3xl border-t border-[var(--color-border)] shadow-[var(--shadow-md)] rounded-t-3xl pointer-events-auto overflow-hidden flex flex-col max-h-[85vh] relative z-10"
+            >
                 
                 {/* Handle Bar (Click to close) */}
                 <div 
@@ -188,7 +200,7 @@ export default function Tray({
                         </div>
                     )}
                 </div>
-            </div>
+            </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
