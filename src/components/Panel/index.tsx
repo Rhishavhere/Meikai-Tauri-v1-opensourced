@@ -73,14 +73,14 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
     <div
       ref={containerRef}
       data-tauri-drag-region
-      className="h-screen w-screen bg-white flex flex-col overflow-hidden p-1 rounded-xl relative"
+      className="h-screen w-screen flex flex-col overflow-hidden p-0.5 rounded-xl relative"
     >
       {/* Background Image */}
-      {/* <div className="absolute inset-0 -z-10 bg-black" >
-        <img src="/bg.jpg" alt="" className="w-full h-full object-cover opacity-60" />
+      {/* <div className="absolute inset-0 -z-10 bg-white" >
+        <img src="/bg.jpg" alt="" className="w-full h-full object-cover" />
       </div> */}
       {/* Main Section */}
-      <div className="bg-white/90 h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
+      <div className="bg-white h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
         {/* Window Controls Bar */}
         <div
           data-tauri-drag-region
@@ -112,32 +112,6 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         {/* {activeView === "home" && (
           <Tray isVisible={showTray} onQuickLink={onQuickLink} />
         )} */}
-      </div>
-      
-      {/* Tray section */}
-      <div className="w-full h-0 bg-white/20">
-
-      </div>
-
-      {/* Bottom Tab Bar */}
-      <div className="flex justify-center h-8 pt-1 items-center gap-6 text-white bg-transparent w-full">
-        {/* {tabs.map((item) => (
-          <motion.button
-            key={item.label}
-            onClick={() => setActiveView(item.view)}
-            className={`p-1 rounded-full hover:bg-white/20 transition-all duration-300 group relative ${
-              activeView === item.view ? "bg-white/30" : ""
-            }`}
-            title={item.label}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <item.icon
-              className="w-5 h-5 text-white/90 group-hover:text-white"
-              strokeWidth={2}
-            />
-          </motion.button>
-        ))} */}
       </div>
     </div>
   );
