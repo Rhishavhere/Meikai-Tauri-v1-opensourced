@@ -52,7 +52,7 @@ export default function HomeTab({ onNavigate, onQuickLink }: HomeTabProps) {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-12 flex flex-col justify-center items-center"
       >
-        <p className="font-merri text-6xl text-[#ee8a93]">Meikai</p>
+        <p className="font-tangerine italic font-bold text-7xl text-[#ee8a93]">Meikai</p>
         <p className="text-gray-500 text-md font-poppins">
           Built for focus. Designed for flow
         </p>

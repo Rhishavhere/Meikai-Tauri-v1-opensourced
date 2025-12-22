@@ -5,6 +5,9 @@ import { listen } from "@tauri-apps/api/event";
 import { PhysicalPosition, PhysicalSize } from '@tauri-apps/api/dpi';
 import { Panel, Dock, MiniPanel } from './components';
 
+// Global panel window size
+export const PANEL_SIZE = { width: 900, height: 600 };
+
 interface ContentWindow {
   windowLabel: string;
   url: string;
@@ -59,7 +62,7 @@ function App() {
         const appWindow = getCurrentWindow();
         setUrl("");
         await appWindow.setAlwaysOnTop(false);
-        await appWindow.setSize(new PhysicalSize(600, 400));
+        await appWindow.setSize(new PhysicalSize(PANEL_SIZE.width, PANEL_SIZE.height));
         await appWindow.center();
         setIsNotchMode(false);
         setContentWindows([]);
@@ -115,7 +118,7 @@ function App() {
     // Transform back to panel at center
     setUrl("")
     await window.setAlwaysOnTop(false);
-    await window.setSize(new PhysicalSize(600, 400));
+    await window.setSize(new PhysicalSize(PANEL_SIZE.width, PANEL_SIZE.height));
     await window.center();
 
     setIsNotchMode(false);

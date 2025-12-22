@@ -60,31 +60,53 @@ fn create_multi_webview_window(
         content_webview_label,
         WebviewUrl::External(url.parse().map_err(|e| format!("Invalid URL: {:?}", e))?)
     ).on_new_window(move |new_url, _features| {
-        // Handle window.open() and target="_blank" requests
-        let new_window_id = uuid::Uuid::new_v4().to_string();
-        let new_window_label = format!("window-{}", new_window_id);
-        let new_titlebar_label = format!("titlebar-{}", new_window_id);
-        let new_content_label = format!("content-{}", new_window_id);
+        // Check if this is an OAuth-related URL that needs native popup handling
+        // OAuth flows require window.opener to communicate back to the parent
         let url_string = new_url.to_string();
-        let app_clone = app_for_handler.clone();
-        let label_for_event = new_content_label.clone();
+        let is_oauth_url = url_string.contains("accounts.google.com") ||
+                          url_string.contains("login.microsoftonline.com") ||
+                          url_string.contains("facebook.com/login") ||
+                          url_string.contains("facebook.com/v") ||
+                          url_string.contains("appleid.apple.com") ||
+                          url_string.contains("github.com/login/oauth") ||
+                          url_string.contains("twitter.com/oauth") ||
+                          url_string.contains("api.twitter.com") ||
+                          url_string.contains("oauth") ||
+                          url_string.contains("authorize") ||
+                          url_string.contains("signin") ||
+                          url_string.contains("auth/");
         
-        match create_multi_webview_window(
-            &app_clone,
-            &new_window_label,
-            &new_titlebar_label,
-            &new_content_label,
-            &url_string,
-        ) {
-            Ok(_) => {
-                // Emit event to frontend to track this new window
-                let _ = app_clone.emit("new-window-created", serde_json::json!({
-                    "windowLabel": label_for_event,
-                    "url": url_string
-                }));
-                tauri::webview::NewWindowResponse::Deny
+        if is_oauth_url {
+            // Let the WebView handle OAuth popups natively to maintain window.opener
+            // This is required for OAuth flows to work properly
+            tauri::webview::NewWindowResponse::Allow
+        } else {
+            // Handle regular window.open() and target="_blank" requests with our custom window
+            let new_window_id = uuid::Uuid::new_v4().to_string();
+            let new_window_label = format!("window-{}", new_window_id);
+            let new_titlebar_label = format!("titlebar-{}", new_window_id);
+            let new_content_label = format!("content-{}", new_window_id);
+            let app_clone = app_for_handler.clone();
+            let label_for_event = new_content_label.clone();
+            let url_for_window = url_string.clone();
+            
+            match create_multi_webview_window(
+                &app_clone,
+                &new_window_label,
+                &new_titlebar_label,
+                &new_content_label,
+                &url_for_window,
+            ) {
+                Ok(_) => {
+                    // Emit event to frontend to track this new window
+                    let _ = app_clone.emit("new-window-created", serde_json::json!({
+                        "windowLabel": label_for_event,
+                        "url": url_for_window
+                    }));
+                    tauri::webview::NewWindowResponse::Deny
+                }
+                Err(_) => tauri::webview::NewWindowResponse::Deny
             }
-            Err(_) => tauri::webview::NewWindowResponse::Deny
         }
     });
     

@@ -73,8 +73,12 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
     <div
       ref={containerRef}
       data-tauri-drag-region
-      className="h-screen w-screen flex flex-col overflow-hidden p-1 bg-linear-to-t from-[#DE6262] to-[#FFB88C] rounded-xl"
+      className="h-screen w-screen bg-white flex flex-col overflow-hidden p-1 rounded-xl relative"
     >
+      {/* Background Image */}
+      {/* <div className="absolute inset-0 -z-10 bg-black" >
+        <img src="/bg.jpg" alt="" className="w-full h-full object-cover opacity-60" />
+      </div> */}
       {/* Main Section */}
       <div className="bg-white/90 h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
         {/* Window Controls Bar */}
@@ -116,8 +120,8 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
       </div>
 
       {/* Bottom Tab Bar */}
-      <div className="flex justify-center h-10 pt-1 items-center gap-6 text-white bg-transparent w-full">
-        {tabs.map((item) => (
+      <div className="flex justify-center h-8 pt-1 items-center gap-6 text-white bg-transparent w-full">
+        {/* {tabs.map((item) => (
           <motion.button
             key={item.label}
             onClick={() => setActiveView(item.view)}
@@ -133,7 +137,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
               strokeWidth={2}
             />
           </motion.button>
-        ))}
+        ))} */}
       </div>
     </div>
   );
