@@ -20,7 +20,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Bookmark management
-  const { bookmarks, addBookmark, editBookmark, deleteBookmark } = useBookmarks();
+  const { bookmarks, addBookmark, deleteBookmark } = useBookmarks();
 
   // Handle scroll to show/hide tray (only on home tab)
   useEffect(() => {
@@ -30,26 +30,18 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
     }
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY < 0) {
-        // Scrolling UP - show tray
+      // Scrolling DOWN (deltaY > 0) - show tray
+      if (e.deltaY > 0 && !showTray) {
         setShowTray(true);
-      } else if (e.deltaY > 0) {
-        // Scrolling DOWN - hide tray
-        setShowTray(false);
       }
     };
 
     const container = containerRef.current;
     if (container) {
       container.addEventListener("wheel", handleWheel);
+      return () => container.removeEventListener("wheel", handleWheel);
     }
-
-    return () => {
-      if (container) {
-        container.removeEventListener("wheel", handleWheel);
-      }
-    };
-  }, [activeView]);
+  }, [activeView, showTray]); // Added showTray dependency to prevent re-triggering
 
   const renderTabContent = () => {
     switch (activeView) {
@@ -64,7 +56,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
     <div
       ref={containerRef}
       data-tauri-drag-region
-      className="h-screen w-screen flex flex-col overflow-hidden p-0.5 rounded-xl relative"
+      className="h-screen w-screen flex flex-col overflow-hidden rounded-xl relative"
     >
       {/* Main Section */}
       <div className="bg-white h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
@@ -96,16 +88,14 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         </div>
 
         {/* Tray - only visible on home tab */}
-        {activeView === "home" && (
-          <Tray
-            isVisible={showTray}
-            bookmarks={bookmarks}
-            onQuickLink={onQuickLink}
-            onAddBookmark={addBookmark}
-            onEditBookmark={editBookmark}
-            onDeleteBookmark={deleteBookmark}
-          />
-        )}
+        <Tray
+          isVisible={showTray}
+          bookmarks={bookmarks}
+          onQuickLink={onQuickLink}
+          onAddBookmark={addBookmark}
+          onDeleteBookmark={deleteBookmark}
+          onClose={() => setShowTray(false)}
+        />
       </div>
     </div>
   );

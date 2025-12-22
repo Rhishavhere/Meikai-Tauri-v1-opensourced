@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, X, Check, Globe } from "lucide-react";
+import { Plus, Globe, Trash2, ExternalLink } from "lucide-react";
 import { Bookmark } from "../../hooks/useBookmarks";
 
 interface TrayProps {
@@ -8,16 +8,8 @@ interface TrayProps {
   bookmarks: Bookmark[];
   onQuickLink: (url: string) => void;
   onAddBookmark: (name: string, url: string) => void;
-  onEditBookmark: (id: string, name: string, url: string) => void;
   onDeleteBookmark: (id: string) => void;
-}
-
-interface ModalState {
-  isOpen: boolean;
-  mode: "add" | "edit";
-  editingId?: string;
-  name: string;
-  url: string;
+  onClose: () => void;
 }
 
 export default function Tray({
@@ -25,52 +17,13 @@ export default function Tray({
   bookmarks,
   onQuickLink,
   onAddBookmark,
-  onEditBookmark,
   onDeleteBookmark,
+  onClose,
 }: TrayProps) {
-  const [modal, setModal] = useState<ModalState>({
-    isOpen: false,
-    mode: "add",
-    name: "",
-    url: "",
-  });
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [newAppUrl, setNewAppUrl] = useState("");
+  const [newAppName, setNewAppName] = useState("");
 
-  const openAddModal = () => {
-    setModal({ isOpen: true, mode: "add", name: "", url: "" });
-  };
-
-  const openEditModal = (bookmark: Bookmark) => {
-    setModal({
-      isOpen: true,
-      mode: "edit",
-      editingId: bookmark.id,
-      name: bookmark.name,
-      url: bookmark.url,
-    });
-  };
-
-  const closeModal = () => {
-    setModal({ isOpen: false, mode: "add", name: "", url: "" });
-  };
-
-  const handleSubmit = () => {
-    if (!modal.name.trim() || !modal.url.trim()) return;
-
-    if (modal.mode === "add") {
-      onAddBookmark(modal.name.trim(), modal.url.trim());
-    } else if (modal.mode === "edit" && modal.editingId) {
-      onEditBookmark(modal.editingId, modal.name.trim(), modal.url.trim());
-    }
-    closeModal();
-  };
-
-  const handleDelete = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    onDeleteBookmark(id);
-  };
-
-  // Get favicon URL for a bookmark
   const getFaviconUrl = (url: string) => {
     try {
       const domain = new URL(url.startsWith("http") ? url : `https://${url}`).hostname;
@@ -80,240 +33,164 @@ export default function Tray({
     }
   };
 
+  const handleAddSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAppUrl) return;
+    
+    // Auto-generate name from URL if empty
+    let name = newAppName;
+    if (!name) {
+      try {
+        const hostname = new URL(newAppUrl.startsWith("http") ? newAppUrl : `https://${newAppUrl}`).hostname;
+        name = hostname.replace("www.", "").split(".")[0];
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+      } catch {
+        name = "Bookmark";
+      }
+    }
+
+    onAddBookmark(name, newAppUrl);
+    setNewAppName("");
+    setNewAppUrl("");
+    setIsAdding(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    // We only care about closing interactions here
+    // e.deltaY < 0 means scrolling UP
+    if (e.deltaY < 0) {
+      const target = e.currentTarget as HTMLDivElement;
+      // If we are at the top of the scroll container
+      if (target.scrollTop <= 0) {
+        onClose();
+      }
+    }
+    // Prevent bubbling to parent Panel, which handles OPEN logic
+    e.stopPropagation();
+  };
+
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {isVisible ? (
-          <motion.div
-            key="expanded-tray"
-            initial={{ opacity: 0, y: "100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "100%" }}
-            transition={{
-              duration: 0.4,
-              ease: [0.4, 0, 0.2, 1],
-            }}
-            className="fixed inset-0 z-40 bg-gradient-to-b from-white via-white to-gray-50"
-          >
-            {/* Header */}
-            <div className="pt-12 pb-6 px-8">
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-center"
-              >
-                <h1 className="text-3xl font-poppins font-semibold text-gray-800 mb-2">
-                  Your Apps
-                </h1>
-                <p className="text-gray-500 font-poppins text-sm">
-                  Quick access to your favorite sites
-                </p>
-              </motion.div>
-            </div>
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%" }}
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center justify-end pointer-events-none"
+        >
+            {/* Glass Sheet */}
+            <div className="w-full max-w-2xl bg-[var(--color-bg-glass)] backdrop-blur-3xl border-t border-[var(--color-border)] shadow-[var(--shadow-md)] rounded-t-3xl pointer-events-auto overflow-hidden flex flex-col max-h-[85vh]">
+                
+                {/* Handle Bar (Click to close) */}
+                <div 
+                  className="w-full flex justify-center pt-3 pb-1 cursor-pointer active:cursor-grabbing hover:opacity-70 transition-opacity"
+                  onClick={onClose}
+                >
+                    <div className="w-12 h-1.5 bg-gray-300/50 rounded-full" />
+                </div>
 
-            {/* Apps Grid */}
-            <div className="flex-1 px-8 pb-24 overflow-y-auto">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="grid grid-cols-4 gap-4 max-w-2xl mx-auto"
-              >
-                {bookmarks.map((bookmark, index) => (
-                  <motion.div
-                    key={bookmark.id}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 + index * 0.03 }}
-                    className="relative group"
-                    onMouseEnter={() => setHoveredId(bookmark.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                  >
-                    <button
-                      onClick={() => onQuickLink(bookmark.url)}
-                      className="w-full p-4 bg-white hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 hover:border-[#ee8a93] flex flex-col items-center gap-3"
+                {/* Header Actions */}
+                <div className="px-6 py-2 flex items-center justify-between shrink-0">
+                    <h2 className="font-poppins font-semibold text-[var(--color-text-primary)]">Your Collection</h2>
+                    <button 
+                        onClick={() => setIsAdding(!isAdding)}
+                        className={`p-2 rounded-full transition-all ${isAdding ? 'bg-gray-100 text-gray-500 rotate-45' : 'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)]'}`}
                     >
-                      {/* Favicon */}
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center overflow-hidden shadow-inner">
-                        {getFaviconUrl(bookmark.url) ? (
-                          <img
-                            src={getFaviconUrl(bookmark.url)!}
-                            alt=""
-                            className="w-8 h-8"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                              (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                            }}
-                          />
-                        ) : null}
-                        <Globe className={`w-6 h-6 text-gray-400 ${getFaviconUrl(bookmark.url) ? 'hidden' : ''}`} />
-                      </div>
-                      
-                      {/* Name */}
-                      <span className="text-sm font-poppins text-gray-700 truncate w-full text-center">
-                        {bookmark.name}
-                      </span>
+                        <Plus className="w-5 h-5" />
                     </button>
+                </div>
 
-                    {/* Edit/Delete overlay */}
-                    <AnimatePresence>
-                      {hoveredId === bookmark.id && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          className="absolute -top-2 -right-2 flex gap-1"
+                {/* Add Form */}
+                <AnimatePresence>
+                    {isAdding && (
+                        <motion.form
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            onSubmit={handleAddSubmit}
+                            className="px-6 overflow-hidden shrink-0"
                         >
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEditModal(bookmark);
-                            }}
-                            className="w-7 h-7 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={(e) => handleDelete(bookmark.id, e)}
-                            className="w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
+                            <div className="bg-[var(--color-bg-secondary)] rounded-xl p-3 mb-4 space-y-2 border border-[var(--color-border)]">
+                                <input
+                                    type="text"
+                                    placeholder="URL (e.g. twitter.com)"
+                                    value={newAppUrl}
+                                    onChange={e => setNewAppUrl(e.target.value)}
+                                    className="w-full bg-transparent text-sm font-poppins focus:outline-none text-[var(--color-text-primary)]"
+                                    autoFocus
+                                />
+                                <div className="h-[1px] bg-gray-200 w-full" />
+                                <input
+                                    type="text"
+                                    placeholder="Name (optional)"
+                                    value={newAppName}
+                                    onChange={e => setNewAppName(e.target.value)}
+                                    className="w-full bg-transparent text-sm font-poppins focus:outline-none text-[var(--color-text-secondary)]"
+                                />
+                                <button type="submit" className="hidden" /> 
+                            </div>
+                        </motion.form>
+                    )}
+                </AnimatePresence>
 
-                {/* Add New App Button */}
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 + bookmarks.length * 0.03 }}
-                  onClick={openAddModal}
-                  className="w-full p-4 bg-gradient-to-br from-[#ee8a93]/10 to-[#fd7e88]/10 hover:from-[#ee8a93]/20 hover:to-[#fd7e88]/20 rounded-2xl border-2 border-dashed border-[#ee8a93]/40 hover:border-[#ee8a93] transition-all flex flex-col items-center gap-3"
+                {/* Compact List - Scrollable */}
+                <div 
+                  className="px-4 pb-8 overflow-y-auto overscroll-contain"
+                  onWheel={handleWheel}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ee8a93] to-[#fd7e88] flex items-center justify-center shadow-md">
-                    <Plus className="w-6 h-6 text-white" />
-                  </div>
-                  <span className="text-sm font-poppins text-[#ee8a93] font-medium">
-                    Add App
-                  </span>
-                </motion.button>
-              </motion.div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {bookmarks.map((bookmark) => (
+                            <motion.div
+                                key={bookmark.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="group relative flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-bg-secondary)] transition-colors cursor-pointer border border-transparent hover:border-[var(--color-border)]"
+                                onClick={() => onQuickLink(bookmark.url)}
+                            >
+                                {/* Favicon */}
+                                <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-gray-100">
+                                    {getFaviconUrl(bookmark.url) ? (
+                                        <img src={getFaviconUrl(bookmark.url)!} alt="" className="w-6 h-6 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                                    ) : <Globe className="w-5 h-5 text-gray-400" />}
+                                </div>
+
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-poppins font-medium text-sm text-[var(--color-text-primary)] truncate">{bookmark.name}</h3>
+                                    <p className="font-poppins text-xs text-[var(--color-text-secondary)] truncate opacity-70">{bookmark.url}</p>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); onDeleteBookmark(bookmark.id); }}
+                                        className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+                                        title="Delete"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                     <button 
+                                        onClick={(e) => { e.stopPropagation(); onQuickLink(bookmark.url); }}
+                                        className="p-1.5 hover:bg-blue-50 text-gray-400 hover:text-blue-500 rounded-lg transition-colors sm:hidden"
+                                    >
+                                        <ExternalLink className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                    
+                    {bookmarks.length === 0 && (
+                        <div className="text-center py-10 text-[var(--color-text-secondary)] opacity-50 font-poppins text-sm">
+                            Always within reach.<br/>Add your first bookmark.
+                        </div>
+                    )}
+                </div>
             </div>
-
-            {/* Scroll down indicator */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-              <p className="text-xs text-gray-400 font-poppins">Scroll down to go back</p>
-              <motion.div
-                animate={{ y: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-                className="w-8 h-1 bg-[#ee8a93] rounded-full"
-              />
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="collapsed-tray"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{
-              duration: 0.2,
-              ease: [0.4, 0, 0.2, 1],
-            }}
-            className="relative flex justify-center items-center"
-          >
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-16 h-1 bg-[#ee8a93] shadow-xl shadow-black backdrop-blur-sm rounded-lg"></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Add/Edit Modal */}
-      <AnimatePresence>
-        {modal.isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100] flex items-center justify-center"
-            onClick={closeModal}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white rounded-2xl p-6 shadow-2xl w-80"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-poppins font-semibold text-gray-800">
-                  {modal.mode === "add" ? "Add App" : "Edit App"}
-                </h3>
-                <button
-                  onClick={closeModal}
-                  className="w-8 h-8 hover:bg-gray-100 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <X className="w-4 h-4 text-gray-500" />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-poppins text-gray-600 mb-1">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={modal.name}
-                    onChange={(e) =>
-                      setModal((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                    className="w-full h-10 px-4 bg-gray-50 rounded-xl text-sm font-poppins border border-gray-200 focus:border-[#ee8a93] focus:outline-none transition-all"
-                    placeholder="e.g., YouTube"
-                    autoFocus
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-poppins text-gray-600 mb-1">
-                    URL
-                  </label>
-                  <input
-                    type="text"
-                    value={modal.url}
-                    onChange={(e) =>
-                      setModal((prev) => ({ ...prev, url: e.target.value }))
-                    }
-                    className="w-full h-10 px-4 bg-gray-50 rounded-xl text-sm font-poppins border border-gray-200 focus:border-[#ee8a93] focus:outline-none transition-all"
-                    placeholder="e.g., youtube.com"
-                  />
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <button
-                    onClick={closeModal}
-                    className="flex-1 h-10 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-poppins text-sm transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={!modal.name.trim() || !modal.url.trim()}
-                    className="flex-1 h-10 bg-gradient-to-r from-[#ee8a93] to-[#fd7e88] hover:from-[#fd7e88] hover:to-[#ee8a93] text-white rounded-xl font-poppins text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    <Check className="w-4 h-4" />
-                    {modal.mode === "add" ? "Add" : "Save"}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

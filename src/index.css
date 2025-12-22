@@ -7,6 +7,18 @@
   --font-tangerine: 'Tangerine', cursive;
   --font-zain: 'Zain', sans-serif;
   --font-merri: "Merriweather", serif;
+
+  /* Light Theme Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-glass: rgba(255, 255, 255, 0.7);
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-accent: #ee8a93;
+  --color-accent-hover: #ff9aa2;
+  --color-border: rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 body{
