@@ -1,13 +1,11 @@
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Minus, X, Settings, User, Home } from "lucide-react";
+import { Minus, X } from "lucide-react";
 
 // Tab Components
 import HomeTab from "./HomeTab";
-import SettingsTab from "./SettingsTab";
-import ProfileTab from "./ProfileTab";
-// import Tray from "./Tray";
+import Tray from "./Tray";
+import { useBookmarks } from "../../hooks/useBookmarks";
 
 interface PanelProps {
   onNavigate: (url: string) => void;
@@ -17,57 +15,50 @@ interface PanelProps {
 type TabView = "home" | "settings" | "profile" | "apps" | "library";
 
 export function Panel({ onNavigate, onQuickLink }: PanelProps) {
-  // const [showTray, setShowTray] = useState(false);
+  const [showTray, setShowTray] = useState(false);
   const [activeView, setActiveView] = useState<TabView>("home");
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Bookmark management
+  const { bookmarks, addBookmark, editBookmark, deleteBookmark } = useBookmarks();
 
   // Handle scroll to show/hide tray (only on home tab)
-  // useEffect(() => {
-  //   if (activeView !== "home") {
-  //     setShowTray(false);
-  //     return;
-  //   }
+  useEffect(() => {
+    if (activeView !== "home") {
+      setShowTray(false);
+      return;
+    }
 
-  //   const handleWheel = (e: WheelEvent) => {
-  //     if (e.deltaY > 0) {
-  //       // Scrolling down
-  //       setShowTray(true);
-  //     } else if (e.deltaY < 0) {
-  //       // Scrolling up
-  //       setShowTray(false);
-  //     }
-  //   };
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY < 0) {
+        // Scrolling UP - show tray
+        setShowTray(true);
+      } else if (e.deltaY > 0) {
+        // Scrolling DOWN - hide tray
+        setShowTray(false);
+      }
+    };
 
-  //   const container = containerRef.current;
-  //   if (container) {
-  //     container.addEventListener("wheel", handleWheel);
-  //   }
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("wheel", handleWheel);
+    }
 
-  //   return () => {
-  //     if (container) {
-  //       container.removeEventListener("wheel", handleWheel);
-  //     }
-  //   };
-  // }, [activeView]);
+    return () => {
+      if (container) {
+        container.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, [activeView]);
 
   const renderTabContent = () => {
     switch (activeView) {
       case "home":
         return <HomeTab onNavigate={onNavigate} onQuickLink={onQuickLink} />;
-      case "settings":
-        return <SettingsTab />;
-      case "profile":
-        return <ProfileTab />;
       default:
         return <HomeTab onNavigate={onNavigate} onQuickLink={onQuickLink} />;
     }
   };
-
-  const tabs = [
-    { icon: Home, label: "Home", view: "home" as TabView },
-    { icon: Settings, label: "Settings", view: "settings" as TabView },
-    { icon: User, label: "Profile", view: "profile" as TabView },
-  ];
 
   return (
     <div
@@ -75,10 +66,6 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
       data-tauri-drag-region
       className="h-screen w-screen flex flex-col overflow-hidden p-0.5 rounded-xl relative"
     >
-      {/* Background Image */}
-      {/* <div className="absolute inset-0 -z-10 bg-white" >
-        <img src="/bg.jpg" alt="" className="w-full h-full object-cover" />
-      </div> */}
       {/* Main Section */}
       <div className="bg-white h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
         {/* Window Controls Bar */}
@@ -109,9 +96,16 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         </div>
 
         {/* Tray - only visible on home tab */}
-        {/* {activeView === "home" && (
-          <Tray isVisible={showTray} onQuickLink={onQuickLink} />
-        )} */}
+        {activeView === "home" && (
+          <Tray
+            isVisible={showTray}
+            bookmarks={bookmarks}
+            onQuickLink={onQuickLink}
+            onAddBookmark={addBookmark}
+            onEditBookmark={editBookmark}
+            onDeleteBookmark={deleteBookmark}
+          />
+        )}
       </div>
     </div>
   );
