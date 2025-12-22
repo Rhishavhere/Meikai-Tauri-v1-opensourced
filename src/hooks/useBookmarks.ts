@@ -6,32 +6,32 @@ export interface Bookmark {
   name: string;
   url: string;
   favicon?: string;
+  starred?: boolean;
 }
 
 const BOOKMARKS_FILE = "bookmarks.json";
 
-// Default bookmarks for first-time users
+// Default bookmarks for first-time users (first 4 are starred for quick links)
 const DEFAULT_BOOKMARKS: Bookmark[] = [
-  { id: "1", name: "Reddit", url: "https://reddit.com" },
-  { id: "2", name: "Stack Overflow", url: "https://stackoverflow.com" },
-  { id: "3", name: "Medium", url: "https://medium.com" },
-  { id: "4", name: "LinkedIn", url: "https://linkedin.com" },
-  { id: "5", name: "Netflix", url: "https://netflix.com" },
-  { id: "6", name: "Spotify", url: "https://spotify.com" },
+  { id: "1", name: "Google", url: "https://google.com", starred: true },
+  { id: "2", name: "YouTube", url: "https://youtube.com", starred: true },
+  { id: "3", name: "GitHub", url: "https://github.com", starred: true },
+  { id: "4", name: "Twitter", url: "https://twitter.com", starred: true },
+  { id: "5", name: "Reddit", url: "https://reddit.com", starred: false },
+  { id: "6", name: "Stack Overflow", url: "https://stackoverflow.com", starred: false },
+  { id: "7", name: "Medium", url: "https://medium.com", starred: false },
+  { id: "8", name: "LinkedIn", url: "https://linkedin.com", starred: false },
 ];
 
 async function loadBookmarksFromFile(): Promise<Bookmark[]> {
   try {
-    // Check if file exists
     const fileExists = await exists(BOOKMARKS_FILE, { baseDir: BaseDirectory.AppData });
     
     if (!fileExists) {
-      // Create default bookmarks file
       await saveBookmarksToFile(DEFAULT_BOOKMARKS);
       return DEFAULT_BOOKMARKS;
     }
     
-    // Read and parse bookmarks
     const content = await readTextFile(BOOKMARKS_FILE, { baseDir: BaseDirectory.AppData });
     return JSON.parse(content);
   } catch (error) {
@@ -42,13 +42,11 @@ async function loadBookmarksFromFile(): Promise<Bookmark[]> {
 
 async function saveBookmarksToFile(bookmarks: Bookmark[]): Promise<void> {
   try {
-    // Ensure the app data directory exists
     const dirExists = await exists("", { baseDir: BaseDirectory.AppData });
     if (!dirExists) {
       await mkdir("", { baseDir: BaseDirectory.AppData, recursive: true });
     }
     
-    // Write bookmarks to file
     await writeTextFile(BOOKMARKS_FILE, JSON.stringify(bookmarks, null, 2), { baseDir: BaseDirectory.AppData });
   } catch (error) {
     console.error("Failed to save bookmarks to file:", error);
@@ -74,11 +72,12 @@ export function useBookmarks() {
     }
   }, [bookmarks, isLoading]);
 
-  const addBookmark = useCallback((name: string, url: string) => {
+  const addBookmark = useCallback((name: string, url: string, starred: boolean = false) => {
     const newBookmark: Bookmark = {
       id: Date.now().toString(),
       name,
       url: url.startsWith("http") ? url : `https://${url}`,
+      starred,
     };
     setBookmarks((prev) => [...prev, newBookmark]);
   }, []);
@@ -97,12 +96,27 @@ export function useBookmarks() {
     setBookmarks((prev) => prev.filter((bookmark) => bookmark.id !== id));
   }, []);
 
+  const toggleStar = useCallback((id: string) => {
+    setBookmarks((prev) =>
+      prev.map((bookmark) =>
+        bookmark.id === id
+          ? { ...bookmark, starred: !bookmark.starred }
+          : bookmark
+      )
+    );
+  }, []);
+
+  // Get only starred bookmarks for quick links
+  const starredBookmarks = bookmarks.filter((b) => b.starred);
+
   return {
     bookmarks,
+    starredBookmarks,
     isLoading,
     addBookmark,
     editBookmark,
     deleteBookmark,
+    toggleStar,
   };
 }
 

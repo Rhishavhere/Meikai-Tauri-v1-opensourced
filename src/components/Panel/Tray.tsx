@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Globe, Trash2, ExternalLink } from "lucide-react";
+import { Plus, Globe, Trash2, ExternalLink, Star } from "lucide-react";
 import { Bookmark } from "../../hooks/useBookmarks";
 
 interface TrayProps {
@@ -9,6 +9,7 @@ interface TrayProps {
   onQuickLink: (url: string) => void;
   onAddBookmark: (name: string, url: string) => void;
   onDeleteBookmark: (id: string) => void;
+  onToggleStar: (id: string) => void;
   onClose: () => void;
 }
 
@@ -18,6 +19,7 @@ export default function Tray({
   onQuickLink,
   onAddBookmark,
   onDeleteBookmark,
+  onToggleStar,
   onClose,
 }: TrayProps) {
   const [isAdding, setIsAdding] = useState(false);
@@ -162,10 +164,17 @@ export default function Tray({
                                 onClick={() => onQuickLink(bookmark.url)}
                             >
                                 {/* Favicon */}
-                                <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-gray-100">
-                                    {getFaviconUrl(bookmark.url) ? (
-                                        <img src={getFaviconUrl(bookmark.url)!} alt="" className="w-6 h-6 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-                                    ) : <Globe className="w-5 h-5 text-gray-400" />}
+                                <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden">
+                                    <img 
+                                      src={getFaviconUrl(bookmark.url) || ""} 
+                                      alt="" 
+                                      className="w-6 h-6 object-contain" 
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = "none";
+                                        (e.currentTarget.nextElementSibling as HTMLElement)?.style.setProperty("display", "block");
+                                      }} 
+                                    />
+                                    <Globe className="w-5 h-5 text-gray-400 hidden" />
                                 </div>
 
                                 {/* Info */}
@@ -176,6 +185,13 @@ export default function Tray({
 
                                 {/* Actions */}
                                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); onToggleStar(bookmark.id); }}
+                                        className={`p-1.5 rounded-lg transition-colors ${bookmark.starred ? 'text-amber-400 hover:text-amber-500 hover:bg-amber-50' : 'text-gray-400 hover:text-amber-400 hover:bg-amber-50'}`}
+                                        title={bookmark.starred ? "Remove from Quick Links" : "Add to Quick Links"}
+                                    >
+                                        <Star className={`w-4 h-4 ${bookmark.starred ? 'fill-current' : ''}`} />
+                                    </button>
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); onDeleteBookmark(bookmark.id); }}
                                         className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
