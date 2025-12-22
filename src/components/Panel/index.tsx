@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, X } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 // Tab Components
-import HomeTab from "./HomeTab";
+import HomeTab from "./Home";
+import Profile from "./Profile";
+import Settings from "./Settings";
 import Tray from "./Tray";
 import { useBookmarks } from "../../hooks/useBookmarks";
 
@@ -12,7 +15,7 @@ interface PanelProps {
   onQuickLink: (url: string) => void;
 }
 
-type TabView = "home" | "settings" | "profile" | "apps" | "library";
+type TabView = "home" | "settings" | "profile";
 
 export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   const [showTray, setShowTray] = useState(false);
@@ -20,16 +23,20 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Bookmark management
-  const { bookmarks, addBookmark, deleteBookmark } = useBookmarks();
+  const { bookmarks, starredBookmarks, addBookmark, deleteBookmark, toggleStar } = useBookmarks();
 
-  // Handle scroll to show/hide tray (only on home tab)
+  // Handle scroll to show/hide tray (ONLY on home view)
   useEffect(() => {
+    // Close tray when leaving home view
     if (activeView !== "home") {
       setShowTray(false);
       return;
     }
 
     const handleWheel = (e: WheelEvent) => {
+      // Only allow tray to open when on home view
+      if (activeView !== "home") return;
+      
       // Scrolling DOWN (deltaY > 0) - show tray
       if (e.deltaY > 0 && !showTray) {
         setShowTray(true);
@@ -41,14 +48,44 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
       container.addEventListener("wheel", handleWheel);
       return () => container.removeEventListener("wheel", handleWheel);
     }
-  }, [activeView, showTray]); // Added showTray dependency to prevent re-triggering
+  }, [activeView, showTray]);
 
   const renderTabContent = () => {
     switch (activeView) {
       case "home":
-        return <HomeTab onNavigate={onNavigate} onQuickLink={onQuickLink} />;
+        return (
+          <HomeTab 
+            onNavigate={onNavigate} 
+            onQuickLink={onQuickLink} 
+            starredBookmarks={starredBookmarks}
+            onOpenProfile={() => setActiveView("profile")}
+            onOpenSettings={() => setActiveView("settings")}
+          />
+        );
+      case "profile":
+        return (
+          <Profile 
+            onBack={() => setActiveView("home")}
+            bookmarksCount={bookmarks.length}
+            starredCount={starredBookmarks.length}
+          />
+        );
+      case "settings":
+        return (
+          <Settings 
+            onBack={() => setActiveView("home")}
+          />
+        );
       default:
-        return <HomeTab onNavigate={onNavigate} onQuickLink={onQuickLink} />;
+        return (
+          <HomeTab 
+            onNavigate={onNavigate} 
+            onQuickLink={onQuickLink} 
+            starredBookmarks={starredBookmarks}
+            onOpenProfile={() => setActiveView("profile")}
+            onOpenSettings={() => setActiveView("settings")}
+          />
+        );
     }
   };
 
@@ -79,23 +116,28 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
           </button>
         </div>
 
-        {/* Tab Content */}
+        {/* Tab Content with AnimatePresence for smooth transitions */}
         <div
           data-tauri-drag-region
           className="flex-1 flex items-center justify-center w-full overflow-hidden"
         >
-          {renderTabContent()}
+          <AnimatePresence mode="wait">
+            {renderTabContent()}
+          </AnimatePresence>
         </div>
 
-        {/* Tray - only visible on home tab */}
-        <Tray
-          isVisible={showTray}
-          bookmarks={bookmarks}
-          onQuickLink={onQuickLink}
-          onAddBookmark={addBookmark}
-          onDeleteBookmark={deleteBookmark}
-          onClose={() => setShowTray(false)}
-        />
+        {/* Tray - only visible on home view */}
+        {activeView === "home" && (
+          <Tray
+            isVisible={showTray}
+            bookmarks={bookmarks}
+            onQuickLink={onQuickLink}
+            onAddBookmark={addBookmark}
+            onDeleteBookmark={deleteBookmark}
+            onToggleStar={toggleStar}
+            onClose={() => setShowTray(false)}
+          />
+        )}
       </div>
     </div>
   );
