@@ -7,8 +7,11 @@
   --font-tangerine: 'Tangerine', cursive;
   --font-zain: 'Zain', sans-serif;
   --font-merri: "Merriweather", serif;
+}
 
-  /* Light Theme Colors */
+/* Light Theme (Default) */
+:root,
+[data-theme="light"] {
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #f8f9fa;
   --color-bg-glass: rgba(255, 255, 255, 0.7);
@@ -16,16 +19,57 @@
   --color-text-secondary: #666666;
   --color-accent: #ee8a93;
   --color-accent-hover: #ff9aa2;
-  --color-border: rgba(0, 0, 0, 0.05);
+  --color-border: rgba(0, 0, 0, 0.08);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-body{
+/* Dark Theme */
+[data-theme="dark"] {
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #242424;
+  --color-bg-glass: rgba(26, 26, 26, 0.8);
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #a0a0a0;
+  --color-accent: #ee8a93;
+  --color-accent-hover: #ff9aa2;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+body {
   background: transparent;
   overflow: hidden;
 }
 
-html{
+html {
   overflow: hidden;
+}
+
+/* Smooth theme transitions */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-secondary);
+  opacity: 0.3;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  opacity: 0.5;
 }

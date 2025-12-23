@@ -106,6 +106,22 @@ export function useBookmarks() {
     );
   }, []);
 
+  const clearAllBookmarks = useCallback(() => {
+    setBookmarks([]);
+  }, []);
+
+  const importBookmarks = useCallback((imported: Bookmark[]) => {
+    // Merge imported bookmarks with existing, avoiding duplicates by URL
+    setBookmarks((prev) => {
+      const existingUrls = new Set(prev.map(b => b.url));
+      const newBookmarks = imported.filter(b => !existingUrls.has(b.url));
+      return [...prev, ...newBookmarks.map(b => ({
+        ...b,
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+      }))];
+    });
+  }, []);
+
   // Get only starred bookmarks for quick links
   const starredBookmarks = bookmarks.filter((b) => b.starred);
 
@@ -117,6 +133,8 @@ export function useBookmarks() {
     editBookmark,
     deleteBookmark,
     toggleStar,
+    clearAllBookmarks,
+    importBookmarks,
   };
 }
 

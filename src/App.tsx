@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { PhysicalPosition, PhysicalSize } from '@tauri-apps/api/dpi';
 import { Panel, Dock, MiniPanel } from './components';
+import { useSettings } from './hooks/useSettings';
 
 // Global panel window size
 export const PANEL_SIZE = { width: 900, height: 600 };
@@ -19,6 +20,18 @@ function App() {
   const [contentWindows, setContentWindows] = useState<ContentWindow[]>([]);
   const [activeWindowIndex, setActiveWindowIndex] = useState(0);
   const [showMiniPanel, setShowMiniPanel] = useState(false);
+
+  // Settings management - lifted to App level to persist across mode switches
+  const {
+    settings,
+    isLoading: settingsLoading,
+    setTheme,
+    setSearchEngine,
+    setQuickLinksLimit,
+    setAnimationsEnabled,
+    resetSettings,
+    getSearchUrl,
+  } = useSettings();
 
   // Get the actively selected window
   const activeContentWindow = contentWindows.length > 0 
@@ -208,9 +221,30 @@ function App() {
     await transformToPanel();
   };
 
+  // Don't render until settings are loaded
+  if (settingsLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-[var(--color-bg-primary)]">
+        <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   // Render Panel or Dock based on mode
   if (!isNotchMode) {
-    return <Panel onNavigate={handleNavigate} onQuickLink={handleQuickLink} />;
+    return (
+      <Panel 
+        onNavigate={handleNavigate} 
+        onQuickLink={handleQuickLink}
+        settings={settings}
+        onThemeChange={setTheme}
+        onSearchEngineChange={setSearchEngine}
+        onQuickLinksLimitChange={setQuickLinksLimit}
+        onAnimationsChange={setAnimationsEnabled}
+        onResetSettings={resetSettings}
+        getSearchUrl={getSearchUrl}
+      />
+    );
   }
 
   return (
@@ -235,4 +269,3 @@ function App() {
 }
 
 export default App;
-

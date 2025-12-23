@@ -107,15 +107,15 @@ export function MiniPanel({ isVisible, onNavigate, onClose }: MiniPanelProps) {
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="absolute top-12 left-1/2 -translate-x-1/2 z-50 w-[380px]"
           >
-            <div className="bg-white backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
+            <div className="bg-[var(--color-bg-primary)] backdrop-blur-xl rounded-2xl shadow-2xl border border-[var(--color-border)] overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200/50">
-                <span className="text-sm font-medium text-gray-700 font-poppins">New Window</span>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
+                <span className="text-sm font-medium text-[var(--color-text-primary)] font-poppins">New Window</span>
                 <button
                   onClick={onClose}
-                  className="p-1 hover:bg-gray-200/70 rounded-lg transition-colors"
+                  className="p-1 hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
                 >
-                  <X className="w-4 h-4 text-gray-500" />
+                  <X className="w-4 h-4 text-[var(--color-text-secondary)]" />
                 </button>
               </div>
 
@@ -124,14 +124,14 @@ export function MiniPanel({ isVisible, onNavigate, onClose }: MiniPanelProps) {
                 {/* Search Input */}
                 <form onSubmit={handleSubmit} className="mb-4">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary)]" />
                     <input
                       ref={inputRef}
                       type="text"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                       placeholder="Search or enter URL"
-                      className="w-full h-10 pl-10 pr-4 bg-gray-100/70 rounded-xl text-sm border border-gray-200/50 focus:border-[#ee8a93] focus:outline-none focus:ring-2 focus:ring-[#ee8a93]/20 transition-all placeholder-gray-400 font-poppins"
+                      className="w-full h-10 pl-10 pr-4 bg-[var(--color-bg-secondary)] rounded-xl text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] focus:border-[var(--color-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20 transition-all placeholder-[var(--color-text-secondary)] font-poppins"
                     />
                   </div>
                 </form>
@@ -142,9 +142,9 @@ export function MiniPanel({ isVisible, onNavigate, onClose }: MiniPanelProps) {
                     <button
                       key={site.name}
                       onClick={() => handleQuickLink(site.url)}
-                      className="p-2 bg-gray-100/70 hover:bg-gray-200/70 rounded-xl transition-all hover:shadow-sm border border-transparent hover:border-[#ee8a93]/30"
+                      className="p-2 bg-[var(--color-bg-secondary)] hover:bg-[var(--color-bg-secondary)]/80 rounded-xl transition-all hover:shadow-sm border border-transparent hover:border-[var(--color-accent)]/30"
                     >
-                      <span className="text-xs font-poppins text-gray-700">{site.name}</span>
+                      <span className="text-xs font-poppins text-[var(--color-text-primary)]">{site.name}</span>
                     </button>
                   ))}
                 </div>

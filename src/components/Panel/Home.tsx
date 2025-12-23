@@ -7,6 +7,7 @@ import {
   Settings
 } from "lucide-react";
 import { Bookmark } from "../../hooks/useBookmarks";
+import { Settings as SettingsType, SEARCH_ENGINES } from "../../hooks/useSettings";
 
 interface HomeTabProps {
   onNavigate: (url: string) => void;
@@ -14,6 +15,8 @@ interface HomeTabProps {
   starredBookmarks: Bookmark[];
   onOpenProfile: () => void;
   onOpenSettings: () => void;
+  settings: SettingsType;
+  getSearchUrl: (query: string) => string;
 }
 
 export default function HomeTab({ 
@@ -21,7 +24,9 @@ export default function HomeTab({
   onQuickLink, 
   starredBookmarks,
   onOpenProfile,
-  onOpenSettings 
+  onOpenSettings,
+  settings,
+  getSearchUrl
 }: HomeTabProps) {
   const [url, setUrl] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -44,7 +49,8 @@ export default function HomeTab({
         fullUrl = "https://" + fullUrl;
       }
     } else {
-      fullUrl = `https://www.google.com/search?q=${encodeURIComponent(fullUrl)}`;
+      // Use the configured search engine
+      fullUrl = getSearchUrl(fullUrl);
     }
 
     onNavigate(fullUrl);
@@ -60,22 +66,29 @@ export default function HomeTab({
     }
   };
 
+  const animationProps = settings.animationsEnabled ? {
+    initial: { opacity: 0, x: -20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 20 },
+    transition: { duration: 0.3, ease: "easeOut" }
+  } : {
+    initial: false,
+    animate: { opacity: 1, x: 0 }
+  };
+
   return (
     <motion.div
       key="home"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden bg-[#fafbfc]"
+      {...animationProps}
+      className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden bg-[var(--color-bg-secondary)]"
     >
       {/* Subtle Background Gradients */}
-      <div className="absolute top-[-15%] right-[-5%] w-[400px] h-[400px] bg-gradient-to-br from-rose-200/30 to-pink-200/20 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[350px] h-[350px] bg-gradient-to-tr from-blue-100/30 to-indigo-100/20 blur-[80px] rounded-full pointer-events-none" />
-      <div className="absolute top-[30%] left-[50%] w-[200px] h-[200px] bg-gradient-to-br from-amber-100/20 to-orange-100/10 blur-[60px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-15%] right-[-5%] w-[400px] h-[400px] bg-gradient-to-br from-rose-200/30 to-pink-200/20 dark:from-rose-900/20 dark:to-pink-900/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[350px] h-[350px] bg-gradient-to-tr from-blue-100/30 to-indigo-100/20 dark:from-blue-900/20 dark:to-indigo-900/10 blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute top-[30%] left-[50%] w-[200px] h-[200px] bg-gradient-to-br from-amber-100/20 to-orange-100/10 dark:from-amber-900/10 dark:to-orange-900/5 blur-[60px] rounded-full pointer-events-none" />
 
       <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        initial={settings.animationsEnabled ? { opacity: 0, y: 30, scale: 0.95 } : false}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="flex flex-col items-center w-full max-w-xl z-10 px-6"
@@ -83,7 +96,7 @@ export default function HomeTab({
         {/* Brand */}
         <motion.div 
           className="text-center mb-8"
-          initial={{ opacity: 0, y: 10 }}
+          initial={settings.animationsEnabled ? { opacity: 0, y: 10 } : false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
@@ -99,7 +112,7 @@ export default function HomeTab({
         <motion.form
           onSubmit={handleSubmit}
           className="w-full relative group z-20"
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={settings.animationsEnabled ? { opacity: 0, scale: 0.9 } : false}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
         >
@@ -111,9 +124,9 @@ export default function HomeTab({
               scale: isFocused ? 1.01 : 1
             }}
             transition={{ duration: 0.25 }}
-            className="flex items-center gap-3 w-full h-12 pl-5 pr-3 bg-white rounded-2xl border border-gray-200/80 group-hover:border-[var(--color-accent)]/30 transition-all duration-300"
+            className="flex items-center gap-3 w-full h-12 pl-5 pr-3 bg-[var(--color-bg-primary)] rounded-2xl border border-[var(--color-border)] group-hover:border-[var(--color-accent)]/30 transition-all duration-300"
           >
-            <Search className={`w-4 h-4 transition-colors duration-200 ${isFocused ? 'text-[var(--color-accent)]' : 'text-gray-400'}`} />
+            <Search className={`w-4 h-4 transition-colors duration-200 ${isFocused ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`} />
             
             <input
               ref={inputRef}
@@ -122,27 +135,27 @@ export default function HomeTab({
               onChange={(e) => setUrl(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              className="flex-1 bg-transparent text-sm text-[var(--color-text-primary)] placeholder-gray-400 focus:outline-none font-poppins"
-              placeholder="Search the web or enter URL..."
+              className="flex-1 bg-transparent text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:outline-none font-poppins"
+              placeholder={`Search with ${SEARCH_ENGINES[settings.searchEngine].name} or enter URL...`}
               autoFocus
             />
             
             <div className="flex items-center gap-1">
               <motion.button
                 type="button"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={settings.animationsEnabled ? { scale: 1.05 } : undefined}
+                whileTap={settings.animationsEnabled ? { scale: 0.95 } : undefined}
                 onClick={onOpenProfile}
-                className="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-[var(--color-accent)] transition-all duration-200"
+                className="w-8 h-8 flex items-center justify-center rounded-xl bg-[var(--color-bg-secondary)] hover:bg-[var(--color-bg-secondary)]/80 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-all duration-200"
               >
                 <User className="w-4 h-4" />
               </motion.button>
               <motion.button
                 type="button"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={settings.animationsEnabled ? { scale: 1.05 } : undefined}
+                whileTap={settings.animationsEnabled ? { scale: 0.95 } : undefined}
                 onClick={onOpenSettings}
-                className="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-[var(--color-accent)] transition-all duration-200"
+                className="w-8 h-8 flex items-center justify-center rounded-xl bg-[var(--color-bg-secondary)] hover:bg-[var(--color-bg-secondary)]/80 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-all duration-200"
               >
                 <Settings className="w-4 h-4" />
               </motion.button>
@@ -153,25 +166,25 @@ export default function HomeTab({
         {/* Quick Links */}
         {starredBookmarks.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={settings.animationsEnabled ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             className="mt-10 w-full"
           >
-            <p className="text-xs font-poppins text-gray-400 uppercase tracking-wider mb-4 text-center">Quick Links</p>
+            <p className="text-xs font-poppins text-[var(--color-text-secondary)] uppercase tracking-wider mb-4 text-center">Quick Links</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              {starredBookmarks.slice(0, 6).map((bookmark, index) => (
+              {starredBookmarks.slice(0, settings.quickLinksLimit).map((bookmark, index) => (
                 <motion.button
                   key={bookmark.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={settings.animationsEnabled ? { opacity: 0, y: 10 } : false}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + index * 0.05 }}
-                  whileHover={{ y: -3, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={settings.animationsEnabled ? { y: -3, scale: 1.02 } : undefined}
+                  whileTap={settings.animationsEnabled ? { scale: 0.98 } : undefined}
                   onClick={() => onQuickLink(bookmark.url)}
-                  className="group flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-gray-100 hover:border-[var(--color-accent)]/30 hover:shadow-md transition-all duration-300"
+                  className="group flex items-center gap-2 px-3 py-2 bg-[var(--color-bg-primary)] rounded-xl border border-[var(--color-border)] hover:border-[var(--color-accent)]/30 hover:shadow-md transition-all duration-300"
                 >
-                  <div className="w-6 h-6 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden">
+                  <div className="w-6 h-6 rounded-lg bg-[var(--color-bg-secondary)] flex items-center justify-center overflow-hidden">
                     {getFaviconUrl(bookmark.url) ? (
                       <img 
                         src={getFaviconUrl(bookmark.url)!} 
@@ -183,9 +196,9 @@ export default function HomeTab({
                         }} 
                       />
                     ) : null}
-                    <Globe className={`w-3 h-3 text-gray-400 ${getFaviconUrl(bookmark.url) ? 'hidden' : ''}`} />
+                    <Globe className={`w-3 h-3 text-[var(--color-text-secondary)] ${getFaviconUrl(bookmark.url) ? 'hidden' : ''}`} />
                   </div>
-                  <span className="text-xs font-poppins text-gray-600 group-hover:text-gray-800 max-w-[80px] truncate transition-colors">
+                  <span className="text-xs font-poppins text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] max-w-[80px] truncate transition-colors">
                     {bookmark.name}
                   </span>
                 </motion.button>
@@ -197,12 +210,12 @@ export default function HomeTab({
         {/* Empty State for Quick Links */}
         {starredBookmarks.length === 0 && (
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={settings.animationsEnabled ? { opacity: 0 } : false}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
             className="mt-10 text-center"
           >
-            <p className="text-sm font-poppins text-gray-400">
+            <p className="text-sm font-poppins text-[var(--color-text-secondary)]">
               Star bookmarks to see them here
             </p>
           </motion.div>

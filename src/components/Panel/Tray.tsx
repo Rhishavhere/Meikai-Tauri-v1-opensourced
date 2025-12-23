@@ -76,7 +76,7 @@ export default function Tray({
       {isVisible && (
         <motion.div
           key="tray-overlay"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex flex-col items-center justify-end pointer-events-none"
@@ -106,7 +106,7 @@ export default function Tray({
 
                 {/* Header Actions */}
                 <div className="px-6 py-2 flex items-center justify-between shrink-0">
-                    <h2 className="font-poppins font-semibold text-[var(--color-text-primary)]">Your Collection</h2>
+                    <h2 className="font-poppins font-semibold text-[var(--color-text-primary)]">Your Apps</h2>
                     <button 
                         onClick={() => setIsAdding(!isAdding)}
                         className={`p-2 rounded-full transition-all ${isAdding ? 'bg-gray-100 text-gray-500 rotate-45' : 'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)]'}`}

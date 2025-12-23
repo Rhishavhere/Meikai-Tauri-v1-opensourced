@@ -95,14 +95,6 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
     }
   };
 
-  // const handleHome = async () => {
-  //   const homeUrl = "https://www.google.com";
-  //   setUrl(homeUrl);
-  //   if (activeContentWindow) {
-  //     await invoke("navigate_to_url", { windowLabel: activeContentWindow, url: homeUrl });
-  //   }
-  // };
-
   const handleMinimize = async () => {
     if (activeContentWindow) {
       await invoke("minimize_browser_window", { windowLabel: activeContentWindow });
@@ -116,28 +108,21 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-[#fff6ee] rounded-3xl">
+    <div className="h-full w-full flex flex-col bg-[var(--color-bg-primary)] rounded-3xl border border-[var(--color-border)]">
       {/* Dock Bar */}
       <div className="flex-1 flex items-center justify-between px-4 p-1">
         {/* Left Group: Navigation Controls */}
         <div className="flex items-center gap-1">
-          {/* <button
-            onClick={handleHome}
-            className="p-2 rounded hover:bg-gray-300 transition-colors"
-            title="Home"
-          >
-            <Home className="w-4 h-4" />
-          </button> */}
           <button
             onClick={handleBack}
-            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            className="p-2 rounded hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] transition-colors"
             title="Go back"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={handleForward}
-            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            className="p-2 rounded hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] transition-colors"
             title="Go forward"
           >
             <ChevronRight className="w-4 h-4" />
@@ -145,14 +130,14 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
           <button
             onClick={onNewWindow}
             disabled={isMiniPanelOpen}
-            className={`p-2 rounded transition-colors ${isMiniPanelOpen ? 'opacity-40' : 'hover:bg-gray-300'}`}
+            className={`p-2 rounded transition-colors text-[var(--color-text-primary)] ${isMiniPanelOpen ? 'opacity-40' : 'hover:bg-[var(--color-bg-secondary)]'}`}
             title="New Window"
           >
             <Plus className="w-4 h-4" />
           </button>
           <button
             onClick={handleReload}
-            className="p-2 rounded hover:bg-gray-300 transition-colors"
+            className="p-2 rounded hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] transition-colors"
             title="Reload"
           >
             <RotateCw className="w-4 h-4" />
@@ -163,9 +148,9 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
         <div className="flex-1 flex justify-start px-4 items-center gap-4">
           <form 
             onSubmit={handleNavigate} 
-            className="relative transition-all duration-300 ease-in-out w-10 hover:w-full focus-within:w-full max-w-xl bg-gray-200 backdrop-blur-md rounded-lg overflow-hidden group"
+            className="relative transition-all duration-300 ease-in-out w-10 hover:w-full focus-within:w-full max-w-xl bg-[var(--color-bg-secondary)] backdrop-blur-md rounded-lg overflow-hidden group"
           >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary)] pointer-events-none" />
             <input
               type="text"
               value={url}
@@ -179,7 +164,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
               }}
               onBlur={() => setIsEditing(false)}
               placeholder="Search or enter URL"
-              className="w-full h-full pl-10 pr-4 py-1 bg-transparent focus:outline-none text-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
+              className="w-full h-full pl-10 pr-4 py-1 bg-transparent text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none text-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
             />
           </form>
           <div 
@@ -201,7 +186,7 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
                 key={index}
                 onClick={() => onSwitchWindow(index)}
                 className={`w-3 h-3 rounded-full transition-colors hover:scale-110 ${
-                  index === activeWindowIndex ? 'bg-red-300' : 'bg-red-100 hover:bg-red-200'
+                  index === activeWindowIndex ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/50'
                 }`}
                 title={`Window ${index + 1}`}
               />
@@ -211,28 +196,24 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
 
         {/* Right Group: Window Controls & Extras */}
         <div className="flex items-center gap-2">
-          
-          
-          
-
           <div className="flex justify-center items-center gap-1">
             <button
               onClick={handleMinimize}
-              className="w-7 h-6 hover:bg-gray-700/50 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
+              className="w-7 h-6 hover:bg-[var(--color-text-secondary)]/20 hover:backdrop-blur-md rounded-2xl flex items-center justify-center transition-colors text-[var(--color-text-primary)]"
               title="Minimize/Restore content window"
             >
               <Minus className="w-4 h-4" />
             </button>
             <button
               onClick={handleMaximize}
-              className="w-7 h-6 hover:bg-gray-700/50 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
+              className="w-7 h-6 hover:bg-[var(--color-text-secondary)]/20 hover:backdrop-blur-md rounded-2xl flex items-center justify-center transition-colors text-[var(--color-text-primary)]"
               title="Maximize/Unmaximize content window"
             >
               <Square strokeWidth="2" className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="w-7 h-6 hover:bg-rose-600/70 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-600"
+              className="w-7 h-6 hover:bg-rose-600/70 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-500"
               title="Close window and return to panel"
             >
               <X className="w-4 h-4" />

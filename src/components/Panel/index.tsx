@@ -8,22 +8,49 @@ import HomeTab from "./Home";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import Tray from "./Tray";
-import { useBookmarks } from "../../hooks/useBookmarks";
+import { useBookmarks, Bookmark } from "../../hooks/useBookmarks";
+import { Settings as SettingsType, Theme, SearchEngine } from "../../hooks/useSettings";
 
 interface PanelProps {
   onNavigate: (url: string) => void;
   onQuickLink: (url: string) => void;
+  // Settings passed from App level
+  settings: SettingsType;
+  onThemeChange: (theme: Theme) => void;
+  onSearchEngineChange: (engine: SearchEngine) => void;
+  onQuickLinksLimitChange: (limit: number) => void;
+  onAnimationsChange: (enabled: boolean) => void;
+  onResetSettings: () => void;
+  getSearchUrl: (query: string) => string;
 }
 
 type TabView = "home" | "settings" | "profile";
 
-export function Panel({ onNavigate, onQuickLink }: PanelProps) {
+export function Panel({ 
+  onNavigate, 
+  onQuickLink,
+  settings,
+  onThemeChange,
+  onSearchEngineChange,
+  onQuickLinksLimitChange,
+  onAnimationsChange,
+  onResetSettings,
+  getSearchUrl
+}: PanelProps) {
   const [showTray, setShowTray] = useState(false);
   const [activeView, setActiveView] = useState<TabView>("home");
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Bookmark management
-  const { bookmarks, starredBookmarks, addBookmark, deleteBookmark, toggleStar } = useBookmarks();
+  // Bookmark management (still local since bookmarks persist via file)
+  const { 
+    bookmarks, 
+    starredBookmarks, 
+    addBookmark, 
+    deleteBookmark, 
+    toggleStar,
+    clearAllBookmarks,
+    importBookmarks
+  } = useBookmarks();
 
   // Handle scroll to show/hide tray (ONLY on home view)
   useEffect(() => {
@@ -60,6 +87,8 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
             starredBookmarks={starredBookmarks}
             onOpenProfile={() => setActiveView("profile")}
             onOpenSettings={() => setActiveView("settings")}
+            settings={settings}
+            getSearchUrl={getSearchUrl}
           />
         );
       case "profile":
@@ -68,12 +97,22 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
             onBack={() => setActiveView("home")}
             bookmarksCount={bookmarks.length}
             starredCount={starredBookmarks.length}
+            settings={settings}
           />
         );
       case "settings":
         return (
           <Settings 
             onBack={() => setActiveView("home")}
+            settings={settings}
+            onThemeChange={onThemeChange}
+            onSearchEngineChange={onSearchEngineChange}
+            onQuickLinksLimitChange={onQuickLinksLimitChange}
+            onAnimationsChange={onAnimationsChange}
+            onResetSettings={onResetSettings}
+            bookmarks={bookmarks}
+            onClearBookmarks={clearAllBookmarks}
+            onImportBookmarks={importBookmarks}
           />
         );
       default:
@@ -84,6 +123,8 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
             starredBookmarks={starredBookmarks}
             onOpenProfile={() => setActiveView("profile")}
             onOpenSettings={() => setActiveView("settings")}
+            settings={settings}
+            getSearchUrl={getSearchUrl}
           />
         );
     }
@@ -96,7 +137,7 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
       className="h-screen w-screen flex flex-col overflow-hidden rounded-xl relative"
     >
       {/* Main Section */}
-      <div className="bg-white h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
+      <div className="bg-[var(--color-bg-primary)] h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
         {/* Window Controls Bar */}
         <div
           data-tauri-drag-region
@@ -104,13 +145,13 @@ export function Panel({ onNavigate, onQuickLink }: PanelProps) {
         >
           <button
             onClick={() => getCurrentWindow().minimize()}
-            className="w-7 h-6 hover:bg-gray-700/50 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-gray-900"
+            className="w-7 h-6 hover:bg-[var(--color-text-secondary)]/20 hover:backdrop-blur-md rounded-2xl flex items-center justify-center transition-colors text-[var(--color-text-primary)]"
           >
             <Minus className="w-4 h-4" />
           </button>
           <button
             onClick={() => getCurrentWindow().close()}
-            className="w-7 h-6 hover:bg-rose-600/70 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-600"
+            className="w-7 h-6 hover:bg-rose-600/70 hover:backdrop-blur-md hover:text-white rounded-2xl flex items-center justify-center transition-colors text-red-500"
           >
             <X className="w-4 h-4" />
           </button>
