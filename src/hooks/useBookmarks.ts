@@ -42,12 +42,18 @@ async function loadBookmarksFromFile(): Promise<Bookmark[]> {
 
 async function saveBookmarksToFile(bookmarks: Bookmark[]): Promise<void> {
   try {
-    const dirExists = await exists("", { baseDir: BaseDirectory.AppData });
-    if (!dirExists) {
+    // Try to create the AppData directory if it doesn't exist
+    // We do this by simply attempting the write - Tauri creates parent dirs automatically
+    // If that fails, we try to create the directory first
+    try {
+      await writeTextFile(BOOKMARKS_FILE, JSON.stringify(bookmarks, null, 2), { baseDir: BaseDirectory.AppData });
+    } catch (writeError) {
+      // Directory might not exist, try to create it
+      console.log("First write attempt failed, creating directory...", writeError);
       await mkdir("", { baseDir: BaseDirectory.AppData, recursive: true });
+      await writeTextFile(BOOKMARKS_FILE, JSON.stringify(bookmarks, null, 2), { baseDir: BaseDirectory.AppData });
     }
-    
-    await writeTextFile(BOOKMARKS_FILE, JSON.stringify(bookmarks, null, 2), { baseDir: BaseDirectory.AppData });
+    console.log("Bookmarks saved successfully");
   } catch (error) {
     console.error("Failed to save bookmarks to file:", error);
   }

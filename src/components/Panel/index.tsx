@@ -8,7 +8,7 @@ import HomeTab from "./Home";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import Tray from "./Tray";
-import { useBookmarks, Bookmark } from "../../hooks/useBookmarks";
+import { useBookmarks } from "../../hooks/useBookmarks";
 import { Settings as SettingsType, Theme, SearchEngine } from "../../hooks/useSettings";
 
 interface PanelProps {
@@ -137,7 +137,14 @@ export function Panel({
       className="h-screen w-screen flex flex-col overflow-hidden rounded-xl relative"
     >
       {/* Main Section */}
-      <div className="bg-[var(--color-bg-primary)] h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
+      <div data-tauri-drag-region className="bg-[var(--color-bg-primary)] h-full w-full flex flex-col overflow-hidden justify-center items-center rounded-xl relative">
+        {/* Dedicated Drag Bar at Top - always draggable */}
+        <div
+          data-tauri-drag-region
+          className="absolute top-0 left-0 right-0 h-8 z-40"
+          style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+        />
+        
         {/* Window Controls Bar */}
         <div
           data-tauri-drag-region
