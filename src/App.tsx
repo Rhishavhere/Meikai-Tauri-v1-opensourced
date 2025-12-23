@@ -117,7 +117,7 @@ function App() {
       // Transform to notch at top of screen
       const x = (screenWidth - 700) / 2;
       await window.setPosition(new PhysicalPosition(x, 10));
-      await window.setSize(new PhysicalSize(700, 40));
+      await window.setSize(new PhysicalSize(700, 50));
       await window.setAlwaysOnTop(false);
 
       console.log('Notch mode activated');

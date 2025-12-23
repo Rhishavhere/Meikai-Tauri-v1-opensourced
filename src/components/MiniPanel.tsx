@@ -105,7 +105,7 @@ export function MiniPanel({ isVisible, onNavigate, onClose }: MiniPanelProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 1, scale: 0.95, y: -10 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute top-12 left-1/2 -translate-x-1/2 z-50 w-[380px]"
+            className="absolute top-14 left-1/2 -translate-x-1/2 z-50 w-[70%]"
           >
             <div className="bg-[var(--color-bg-primary)] backdrop-blur-xl rounded-2xl shadow-2xl border border-[var(--color-border)] overflow-hidden">
               {/* Header */}
