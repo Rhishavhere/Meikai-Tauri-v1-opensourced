@@ -5,6 +5,7 @@ import { listen } from "@tauri-apps/api/event";
 import { PhysicalPosition, PhysicalSize } from '@tauri-apps/api/dpi';
 import { Panel, Dock, MiniPanel } from './components';
 import { useSettings } from './hooks/useSettings';
+import { useBookmarks } from './hooks/useBookmarks';
 
 // Global panel window size
 export const PANEL_SIZE = { width: 900, height: 600 };
@@ -32,6 +33,12 @@ function App() {
     resetSettings,
     getSearchUrl,
   } = useSettings();
+
+  // Bookmarks management - also at App level for MiniPanel access
+  const {
+    bookmarks,
+    starredBookmarks,
+  } = useBookmarks();
 
   // Get the actively selected window
   const activeContentWindow = contentWindows.length > 0 
@@ -164,7 +171,7 @@ function App() {
   const handleNewWindow = async () => {
     const window = getCurrentWindow();
     // Expand dock height to show MiniPanel
-    await window.setSize(new PhysicalSize(700, 300));
+    await window.setSize(new PhysicalSize(700, 500));
     setShowMiniPanel(true);
   };
 
@@ -263,6 +270,9 @@ function App() {
         isVisible={showMiniPanel}
         onNavigate={handleCreateNewWindow}
         onClose={handleCloseMiniPanel}
+        bookmarks={bookmarks}
+        starredBookmarks={starredBookmarks}
+        getSearchUrl={getSearchUrl}
       />
     </>
   );
