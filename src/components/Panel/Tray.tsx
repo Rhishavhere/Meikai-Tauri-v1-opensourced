@@ -87,7 +87,7 @@ export default function Tray({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-0 pointer-events-auto bg-black/30 backdrop-blur-sm rounded-xl"
+              className="absolute inset-0 pointer-events-auto bg-black/10 backdrop-blur-xs rounded-xl"
               onClick={onClose} 
             />
 
@@ -97,7 +97,7 @@ export default function Tray({
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-full max-w-2xl bg-white backdrop-blur-3xl border-t border-[var(--color-border)] shadow-[var(--shadow-md)] rounded-t-3xl pointer-events-auto overflow-hidden flex flex-col max-h-[85vh] relative z-10"
+              className="w-full max-w-2xl bg-white border-t border-[var(--color-border)] shadow-[var(--shadow-md)] rounded-t-3xl pointer-events-auto overflow-hidden flex flex-col max-h-[85vh] relative z-10"
             >
                 
                 {/* Handle Bar (Click to close) */}
