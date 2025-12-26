@@ -1,4 +1,4 @@
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { 
   Search, 
@@ -25,9 +25,6 @@ interface HomeTabProps {
   onOpenProfile: () => void;
   onOpenSettings: () => void;
   onOpenBookmarks: () => void;
-  onOpenHistory?: () => void;
-  onOpenDownloads?: () => void;
-  onOpenIncognito?: () => void;
   settings: SettingsType;
   getSearchUrl: (query: string) => string;
 }
@@ -49,15 +46,13 @@ export default function HomeTab({
   onOpenProfile,
   onOpenSettings,
   onOpenBookmarks,
-  onOpenHistory,
-  onOpenDownloads,
-  onOpenIncognito,
   settings,
   getSearchUrl
 }: HomeTabProps) {
   const [url, setUrl] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Time update effect
@@ -72,9 +67,12 @@ export default function HomeTab({
       case 'profile': onOpenProfile(); break;
       case 'settings': onOpenSettings(); break;
       case 'bookmarks': onOpenBookmarks(); break;
-      case 'history': onOpenHistory?.(); break;
-      case 'downloads': onOpenDownloads?.(); break;
-      case 'incognito': onOpenIncognito?.(); break;
+      case 'history':
+      case 'downloads':
+      case 'incognito':
+        setShowComingSoon(true);
+        setTimeout(() => setShowComingSoon(false), 2000);
+        break;
     }
   };
 
@@ -147,6 +145,19 @@ export default function HomeTab({
   return (
     <div className="w-full h-full flex flex-col relative overflow-hidden bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] font-poppins selection:bg-[var(--color-accent)]/30">
       
+      {/* Coming Soon Toast */}
+      <AnimatePresence>
+        {showComingSoon && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] shadow-lg"
+          >
+            <span className="font-poppins text-sm text-[var(--color-text-primary)]">Coming soon!</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Enhanced Background Ambience */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-30%] right-[-15%] w-[700px] h-[700px] bg-[var(--color-accent)]/8 blur-[150px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
@@ -273,7 +284,7 @@ export default function HomeTab({
               {/* Brand */}
               <div className="mb-8 text-center">
                 <h2 className="font-tangerine text-7xl text-[var(--color-accent)] opacity-90 mb-2">Meikai</h2>
-                <p className="text-xs text-[var(--color-text-secondary)]/60 uppercase tracking-[0.3em]">Browser</p>
+                <p className="text-xs text-[var(--color-text-secondary)]/60 uppercase tracking-[0.3em]">Seamless <span className="text-[var(--color-accent)]">Browsing</span></p>
               </div>
                
               {/* Search Bar */}
