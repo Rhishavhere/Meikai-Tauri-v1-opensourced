@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { PhysicalPosition, PhysicalSize } from '@tauri-apps/api/dpi';
 import { Panel, Dock, MiniPanel } from './components';
+import { BetaDisclaimer } from './components/BetaDisclaimer';
 import { useSettings } from './hooks/useSettings';
 import { useBookmarks } from './hooks/useBookmarks';
 
@@ -30,6 +31,7 @@ function App() {
     setSearchEngine,
     setQuickLinksLimit,
     setAnimationsEnabled,
+    setHasSeenDisclaimer,
     resetSettings,
     getSearchUrl,
   } = useSettings();
@@ -237,17 +239,22 @@ function App() {
   // Render Panel or Dock based on mode
   if (!isNotchMode) {
     return (
-      <Panel 
-        onNavigate={handleNavigate} 
-        onQuickLink={handleQuickLink}
-        settings={settings}
-        onThemeChange={setTheme}
-        onSearchEngineChange={setSearchEngine}
-        onQuickLinksLimitChange={setQuickLinksLimit}
-        onAnimationsChange={setAnimationsEnabled}
-        onResetSettings={resetSettings}
-        getSearchUrl={getSearchUrl}
-      />
+      <>
+        {!settings.hasSeenDisclaimer && (
+          <BetaDisclaimer onDismiss={() => setHasSeenDisclaimer(true)} />
+        )}
+        <Panel 
+          onNavigate={handleNavigate} 
+          onQuickLink={handleQuickLink}
+          settings={settings}
+          onThemeChange={setTheme}
+          onSearchEngineChange={setSearchEngine}
+          onQuickLinksLimitChange={setQuickLinksLimit}
+          onAnimationsChange={setAnimationsEnabled}
+          onResetSettings={resetSettings}
+          getSearchUrl={getSearchUrl}
+        />
+      </>
     );
   }
 

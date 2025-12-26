@@ -9,6 +9,7 @@ export interface Settings {
   searchEngine: SearchEngine;
   quickLinksLimit: number;
   animationsEnabled: boolean;
+  hasSeenDisclaimer: boolean;
 }
 
 const SETTINGS_FILE = "settings.json";
@@ -18,6 +19,7 @@ const DEFAULT_SETTINGS: Settings = {
   searchEngine: "google",
   quickLinksLimit: 6,
   animationsEnabled: true,
+  hasSeenDisclaimer: false,
 };
 
 // Search engine URL templates
@@ -139,6 +141,10 @@ export function useSettings() {
     updateSetting("animationsEnabled", enabled);
   }, [updateSetting]);
 
+  const setHasSeenDisclaimer = useCallback((seen: boolean) => {
+    updateSetting("hasSeenDisclaimer", seen);
+  }, [updateSetting]);
+
   const resetSettings = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
     applyTheme(DEFAULT_SETTINGS.theme);
@@ -157,6 +163,7 @@ export function useSettings() {
     setSearchEngine,
     setQuickLinksLimit,
     setAnimationsEnabled,
+    setHasSeenDisclaimer,
     resetSettings,
     getSearchUrl,
     updateSetting,
