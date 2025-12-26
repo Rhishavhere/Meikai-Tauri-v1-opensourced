@@ -37,7 +37,7 @@ export default function Profile({ onBack, bookmarksCount, starredCount, settings
     name: "Beta User",
     email: "user@meikai.app",
     avatar: null,
-    joinDate: "December 2024",
+    joinDate: "December 2025",
     historyCount: 0
   };
 
