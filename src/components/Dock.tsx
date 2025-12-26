@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { ChevronLeft, ChevronRight, RotateCw, X, Minus, Square, Plus, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCw, X, Minus, Square, Plus, Search, Bookmark } from 'lucide-react';
 
 interface ContentWindow {
   windowLabel: string;
@@ -17,6 +17,8 @@ interface DockProps {
   contentWindows: ContentWindow[];
   activeWindowIndex: number;
   onSwitchWindow: (index: number) => void;
+  onAddBookmark?: (name: string, url: string) => void;
+  isBookmarked?: boolean;
 }
 
 interface UrlChangedPayload {
@@ -24,7 +26,7 @@ interface UrlChangedPayload {
   windowLabel: string;
 }
 
-export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, isMiniPanelOpen = false, contentWindows, activeWindowIndex, onSwitchWindow }: DockProps) {
+export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, isMiniPanelOpen = false, contentWindows, activeWindowIndex, onSwitchWindow, onAddBookmark, isBookmarked = false }: DockProps) {
   const [url, setUrl] = useState(initialUrl);
   const [isEditing, setIsEditing] = useState(false);
   const isEditingRef = useRef(isEditing);
@@ -141,6 +143,28 @@ export function Dock({ activeContentWindow, initialUrl, onClose, onNewWindow, is
             title="Reload"
           >
             <RotateCw className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => {
+              if (onAddBookmark && url && !isBookmarked) {
+                try {
+                  const urlObj = new URL(url);
+                  const name = urlObj.hostname.replace('www.', '');
+                  onAddBookmark(name, url);
+                } catch {
+                  onAddBookmark(url, url);
+                }
+              }
+            }}
+            disabled={isBookmarked}
+            className={`p-2 rounded transition-colors ${
+              isBookmarked 
+                ? 'text-[var(--color-accent)]' 
+                : 'text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]'
+            }`}
+            title={isBookmarked ? "Bookmarked" : "Add to bookmarks"}
+          >
+            <Bookmark className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} />
           </button>
         </div>
 

@@ -15,12 +15,12 @@ const BOOKMARKS_FILE = "bookmarks.json";
 const DEFAULT_BOOKMARKS: Bookmark[] = [
   { id: "1", name: "Google", url: "https://google.com", starred: true },
   { id: "2", name: "YouTube", url: "https://youtube.com", starred: true },
-  { id: "3", name: "GitHub", url: "https://github.com", starred: true },
-  { id: "4", name: "Twitter", url: "https://twitter.com", starred: true },
+  { id: "3", name: "Netflix", url: "https://netflix.com", starred: true },
+  { id: "4", name: "Twitter", url: "https://twitter.com", starred: false },
   { id: "5", name: "Reddit", url: "https://reddit.com", starred: false },
-  { id: "6", name: "Stack Overflow", url: "https://stackoverflow.com", starred: false },
-  { id: "7", name: "Medium", url: "https://medium.com", starred: false },
-  { id: "8", name: "LinkedIn", url: "https://linkedin.com", starred: false },
+  { id: "6", name: "Pinterest", url: "https://pinterest.com", starred: true },
+  { id: "7", name: "Meikai", url: "https://meikai.rhishav.com", starred: true },
+  { id: "8", name: "Rhishav", url: "https://rhishav.com", starred: true },
 ];
 
 async function loadBookmarksFromFile(): Promise<Bookmark[]> {

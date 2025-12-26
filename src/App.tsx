@@ -40,12 +40,27 @@ function App() {
   const {
     bookmarks,
     starredBookmarks,
+    addBookmark,
   } = useBookmarks();
 
   // Get the actively selected window
   const activeContentWindow = contentWindows.length > 0 
     ? contentWindows[activeWindowIndex]?.windowLabel 
     : null;
+
+  // Listen for URL changes from content windows to keep App's url state in sync
+  useEffect(() => {
+    const unlisten = listen<{ url: string; windowLabel: string }>("url-changed", (event) => {
+      // Only update if it's from the active content window
+      if (event.payload.windowLabel === activeContentWindow) {
+        setUrl(event.payload.url);
+      }
+    });
+
+    return () => {
+      unlisten.then(fn => fn());
+    };
+  }, [activeContentWindow]);
 
   // Listen for new windows created from redirect links (target="_blank", window.open)
   useEffect(() => {
@@ -269,6 +284,8 @@ function App() {
         contentWindows={contentWindows}
         activeWindowIndex={activeWindowIndex}
         onSwitchWindow={handleSwitchWindow}
+        onAddBookmark={addBookmark}
+        isBookmarked={bookmarks.some(b => b.url === url)}
       />
       <MiniPanel 
         isVisible={showMiniPanel}
