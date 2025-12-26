@@ -469,8 +469,8 @@ export default function Settings({
                   Maximum number of quick links shown on home
                 </p>
               </div>
-              <div className="p-3 grid grid-cols-4 gap-2">
-                {[2, 4, 6, 8, 10, 12].map((limit) => (
+              <div className="p-3 grid grid-cols-2 gap-2">
+                {[3, 6].map((limit) => (
                   <button
                     key={limit}
                     onClick={() => {
