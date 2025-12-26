@@ -5,7 +5,6 @@ import {
   Globe, 
   User, 
   Settings,
-  Sparkles,
   Clock,
   ArrowRight,
   Calendar,
@@ -169,8 +168,12 @@ export default function HomeTab({
         {/* Compact Header */}
         <div className="flex justify-between items-center mb-6">
           <motion.div variants={itemVariants} className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-hover)] flex items-center justify-center shadow-lg shadow-[var(--color-accent)]/20">
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center">
+              <img 
+                src={settings.theme === "dark" ? "/logo-dark.png" : "/logo-light.png"} 
+                alt="Meikai" 
+                className={`w-8 h-8 object-contain`}
+              />
             </div>
             <div>
               <h1 className="text-lg font-semibold tracking-tight">
@@ -182,7 +185,7 @@ export default function HomeTab({
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="flex gap-2">
+          {/* <motion.div variants={itemVariants} className="flex gap-2">
             <button 
               onClick={onOpenProfile}
               className="p-2.5 rounded-xl bg-[var(--color-bg-primary)]/80 backdrop-blur-sm border border-[var(--color-border)] hover:border-[var(--color-accent)]/50 transition-all text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:scale-105 active:scale-95"
@@ -195,27 +198,26 @@ export default function HomeTab({
             >
               <Settings className="w-4 h-4" />
             </button>
-          </motion.div>
+          </motion.div> */}
         </div>
 
         {/* Main Content - Bento Grid Layout */}
-        <div className="flex-1 grid grid-cols-12 gap-4 max-h-[calc(100vh-140px)] overflow-hidden">
+        <div className="flex-1 grid grid-cols-11 gap-4 max-h-[calc(100vh-140px)] overflow-hidden">
           
           {/* Left Column */}
-          <div className="col-span-4 flex flex-col gap-4">
+          <div className="col-span-3 flex flex-col gap-4">
             
             {/* Time Widget */}
             <motion.div 
               variants={itemVariants}
-              className="bg-gradient-to-br from-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/80 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-5 relative overflow-hidden group hover:border-[var(--color-accent)]/30 transition-all duration-300"
+              className="bg-gradient-to-br from-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/80 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-5 relative overflow-hidden group transition-all duration-300"
             >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--color-accent)]/5 blur-2xl rounded-full" />
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock className="w-4 h-4 text-[var(--color-accent)]" />
                   <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Local Time</span>
                 </div>
-                <p className="text-4xl font-bold tracking-tight font-zain">{formattedTime}</p>
+                <p className="text-2xl font-medium tracking-tight font-zain">{formattedTime}</p>
                 <p className="text-xs text-[var(--color-text-secondary)] mt-1 flex items-center gap-1.5">
                   <Calendar className="w-3 h-3" />
                   {currentTime.toLocaleDateString([], { year: 'numeric' })}
@@ -223,34 +225,36 @@ export default function HomeTab({
               </div>
             </motion.div>
 
-            {/* Quick Actions Toolbar */}
+            {/* Quick Actions - Vertical Card */}
             <motion.div 
               variants={itemVariants}
-              className="flex-1 bg-[var(--color-bg-primary)]/80 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-4 relative overflow-hidden"
+              className="flex-1 bg-[var(--color-bg-primary)]/60 backdrop-blur-sm rounded-2xl border border-[var(--color-border)] p-3 flex flex-col gap-1"
             >
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full" />
-              <div className="relative z-10 h-full flex flex-col">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-4 h-4 text-[var(--color-accent)]" />
-                  <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Quick Actions</span>
-                </div>
-                <div className="flex-1 grid grid-cols-2 gap-2">
-                  {QUICK_ACTIONS.map((action) => {
-                    const Icon = action.icon;
-                    return (
-                      <button
-                        key={action.id}
-                        onClick={() => handleQuickAction(action.id)}
-                        className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-bg-secondary)] transition-all duration-200 group/action"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-[var(--color-bg-primary)] flex items-center justify-center group-hover/action:bg-[var(--color-accent)]/10 transition-colors">
-                          <Icon className="w-4 h-4 text-[var(--color-text-secondary)] group-hover/action:text-[var(--color-accent)] transition-colors" />
-                        </div>
-                        <span className="text-xs font-medium text-[var(--color-text-secondary)] group-hover/action:text-[var(--color-text-primary)] transition-colors">{action.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+              {QUICK_ACTIONS.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <button
+                    key={action.id}
+                    onClick={() => handleQuickAction(action.id)}
+                    className="group flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--color-bg-secondary)] transition-all duration-200 text-left"
+                  >
+                    <Icon className="w-4 h-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0" />
+                    <span className="text-xs text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">{action.label}</span>
+                  </button>
+                );
+              })}
+            </motion.div>
+
+            {/* Meikai Info */}
+            <motion.div 
+              variants={itemVariants}
+              className="bg-[var(--color-bg-primary)]/30 rounded-2xl p-4"
+            >
+              <div className="text-center space-y-1">
+                <p className="text-xs font-light text-[var(--color-text-primary)]/50">Meikai - v0.1.4 · Private Beta</p>
+                {/* <p className="text-[10px] text-[var(--color-text-secondary)]/60">
+                  
+                </p> */}
               </div>
             </motion.div>
           </div>
@@ -258,7 +262,7 @@ export default function HomeTab({
           {/* Center - Search & Brand */}
           <motion.div 
             variants={itemVariants}
-            className="col-span-8 bg-gradient-to-br from-[var(--color-bg-primary)] via-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/90 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-8 flex flex-col justify-center items-center relative overflow-hidden group hover:border-[var(--color-accent)]/20 transition-all duration-500"
+            className="col-span-8 bg-gradient-to-br from-[var(--color-bg-primary)] via-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/90 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-8 flex flex-col justify-center items-center relative overflow-hidden group transition-all duration-500"
           >
             {/* Decorative elements */}
             <div className="absolute top-4 right-4 w-32 h-32 bg-[var(--color-accent)]/8 blur-3xl rounded-full" />
