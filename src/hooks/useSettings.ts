@@ -146,7 +146,7 @@ export function useSettings() {
   }, [updateSetting]);
 
   const setQuickLinksLimit = useCallback((limit: number) => {
-    updateSetting("quickLinksLimit", Math.max(2, Math.min(12, limit)));
+    updateSetting("quickLinksLimit", Math.max(3, Math.min(6, limit)));
   }, [updateSetting]);
 
   const setAnimationsEnabled = useCallback((enabled: boolean) => {
