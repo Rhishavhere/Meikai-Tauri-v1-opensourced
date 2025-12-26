@@ -87,6 +87,7 @@ export function Panel({
             starredBookmarks={starredBookmarks}
             onOpenProfile={() => setActiveView("profile")}
             onOpenSettings={() => setActiveView("settings")}
+            onOpenBookmarks={() => setShowTray(true)}
             settings={settings}
             getSearchUrl={getSearchUrl}
           />
@@ -123,6 +124,7 @@ export function Panel({
             starredBookmarks={starredBookmarks}
             onOpenProfile={() => setActiveView("profile")}
             onOpenSettings={() => setActiveView("settings")}
+            onOpenBookmarks={() => setShowTray(true)}
             settings={settings}
             getSearchUrl={getSearchUrl}
           />

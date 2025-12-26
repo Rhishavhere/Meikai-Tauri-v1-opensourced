@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { 
   Search, 
@@ -7,11 +7,14 @@ import {
   Settings,
   Sparkles,
   Clock,
-  Lightbulb,
   ArrowRight,
   Calendar,
   Star,
-  Zap
+  Zap,
+  Bookmark as BookmarkIcon,
+  History,
+  Download,
+  EyeOff
 } from "lucide-react";
 import { Bookmark } from "../../hooks/useBookmarks";
 import { Settings as SettingsType, SEARCH_ENGINES } from "../../hooks/useSettings";
@@ -22,19 +25,22 @@ interface HomeTabProps {
   starredBookmarks: Bookmark[];
   onOpenProfile: () => void;
   onOpenSettings: () => void;
+  onOpenBookmarks: () => void;
+  onOpenHistory?: () => void;
+  onOpenDownloads?: () => void;
+  onOpenIncognito?: () => void;
   settings: SettingsType;
   getSearchUrl: (query: string) => string;
 }
 
-const TIPS = [
-  { icon: "⌨️", text: "Press Ctrl+T to open a new tab quickly." },
-  { icon: "🔄", text: "You can drag tabs to reorder them." },
-  { icon: "🔇", text: "Right-click on a tab to mute audio." },
-  { icon: "⭐", text: "Use bookmarks to save your favorite sites." },
-  { icon: "🌙", text: "Dark mode saves battery on OLED screens." },
-  { icon: "🇯🇵", text: "Meikai means 'Clear' in Japanese." },
-  { icon: "📑", text: "Hover over tab strip to scroll through tabs." },
-  { icon: "⚙️", text: "Customize your experience in Settings." }
+// Quick Actions toolbar items
+const QUICK_ACTIONS = [
+  { id: 'profile', icon: User, label: 'Profile' },
+  { id: 'settings', icon: Settings, label: 'Settings' },
+  { id: 'bookmarks', icon: BookmarkIcon, label: 'Bookmarks' },
+  { id: 'history', icon: History, label: 'History' },
+  { id: 'downloads', icon: Download, label: 'Downloads' },
+  { id: 'incognito', icon: EyeOff, label: 'Incognito' },
 ];
 
 export default function HomeTab({ 
@@ -43,13 +49,16 @@ export default function HomeTab({
   starredBookmarks,
   onOpenProfile,
   onOpenSettings,
+  onOpenBookmarks,
+  onOpenHistory,
+  onOpenDownloads,
+  onOpenIncognito,
   settings,
   getSearchUrl
 }: HomeTabProps) {
   const [url, setUrl] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Time update effect
@@ -58,13 +67,17 @@ export default function HomeTab({
     return () => clearInterval(timer);
   }, []);
 
-  // Tip rotation effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTipIndex((prev) => (prev + 1) % TIPS.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
+  // Handler for quick actions
+  const handleQuickAction = (actionId: string) => {
+    switch (actionId) {
+      case 'profile': onOpenProfile(); break;
+      case 'settings': onOpenSettings(); break;
+      case 'bookmarks': onOpenBookmarks(); break;
+      case 'history': onOpenHistory?.(); break;
+      case 'downloads': onOpenDownloads?.(); break;
+      case 'incognito': onOpenIncognito?.(); break;
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,11 +138,7 @@ export default function HomeTab({
     }
   };
 
-  const tipVariants: Variants = {
-    initial: { opacity: 0, y: 15 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -15 }
-  };
+
 
   const formattedTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const formattedDate = currentTime.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
@@ -214,47 +223,33 @@ export default function HomeTab({
               </div>
             </motion.div>
 
-            {/* Tips Widget */}
+            {/* Quick Actions Toolbar */}
             <motion.div 
               variants={itemVariants}
-              className="flex-1 bg-[var(--color-bg-primary)]/80 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-5 relative overflow-hidden group hover:border-[var(--color-accent)]/30 transition-all duration-300"
+              className="flex-1 bg-[var(--color-bg-primary)]/80 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-4 relative overflow-hidden"
             >
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full" />
               <div className="relative z-10 h-full flex flex-col">
                 <div className="flex items-center gap-2 mb-4">
-                  <Lightbulb className="w-4 h-4 text-amber-500" />
-                  <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Quick Tip</span>
+                  <Sparkles className="w-4 h-4 text-[var(--color-accent)]" />
+                  <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Quick Actions</span>
                 </div>
-                <div className="flex-1 flex items-center">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={currentTipIndex}
-                      variants={shouldAnimate ? tipVariants : undefined}
-                      initial={shouldAnimate ? "initial" : "animate"}
-                      animate="animate"
-                      exit={shouldAnimate ? "exit" : undefined}
-                      transition={{ duration: 0.3 }}
-                      className="flex flex-col gap-2"
-                    >
-                      <span className="text-2xl">{TIPS[currentTipIndex].icon}</span>
-                      <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
-                        {TIPS[currentTipIndex].text}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-                {/* Tip Progress Dots */}
-                <div className="flex gap-1 mt-4">
-                  {TIPS.map((_, idx) => (
-                    <div 
-                      key={idx}
-                      className={`h-1 rounded-full transition-all duration-300 ${
-                        idx === currentTipIndex 
-                          ? 'w-4 bg-[var(--color-accent)]' 
-                          : 'w-1 bg-[var(--color-border)]'
-                      }`}
-                    />
-                  ))}
+                <div className="flex-1 grid grid-cols-2 gap-2">
+                  {QUICK_ACTIONS.map((action) => {
+                    const Icon = action.icon;
+                    return (
+                      <button
+                        key={action.id}
+                        onClick={() => handleQuickAction(action.id)}
+                        className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-bg-secondary)] transition-all duration-200 group/action"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-[var(--color-bg-primary)] flex items-center justify-center group-hover/action:bg-[var(--color-accent)]/10 transition-colors">
+                          <Icon className="w-4 h-4 text-[var(--color-text-secondary)] group-hover/action:text-[var(--color-accent)] transition-colors" />
+                        </div>
+                        <span className="text-xs font-medium text-[var(--color-text-secondary)] group-hover/action:text-[var(--color-text-primary)] transition-colors">{action.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
@@ -352,6 +347,15 @@ export default function HomeTab({
           </motion.div>
 
         </div>
+
+        {/* Bottom Slide Indicator */}
+        <motion.div 
+          variants={itemVariants}
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 cursor-pointer group"
+        >
+          <div className="w-20 h-1 rounded-full bg-[var(--color-accent)]/80 group-hover:bg-[var(--color-accent)]/50 transition-colors mt-1" />
+        </motion.div>
+
       </motion.div>
     </div>
   );
