@@ -165,12 +165,17 @@ export default function HomeTab({
     }
   };
 
-  const getFaviconUrl = (bookmarkUrl: string) => {
+  const getFaviconUrls = (bookmarkUrl: string): string[] => {
     try {
-      const domain = new URL(bookmarkUrl.startsWith("http") ? bookmarkUrl : `https://${bookmarkUrl}`).hostname;
-      return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      const parsedUrl = new URL(bookmarkUrl.startsWith("http") ? bookmarkUrl : `https://${bookmarkUrl}`);
+      const domain = parsedUrl.hostname;
+      const origin = parsedUrl.origin;
+      return [
+        `${origin}/favicon.ico`, // Try direct favicon first
+        `https://www.google.com/s2/favicons?domain=${domain}&sz=64`, // Google as fallback
+      ];
     } catch {
-      return null;
+      return [];
     }
   };
 
@@ -442,11 +447,28 @@ export default function HomeTab({
                       title={bookmark.name}
                     >
                       <div className="w-5 h-5 rounded-md bg-[var(--color-bg-primary)] flex items-center justify-center overflow-hidden">
-                        {getFaviconUrl(bookmark.url) ? (
-                          <img src={getFaviconUrl(bookmark.url)!} alt="" className="w-3.5 h-3.5" />
-                        ) : (
-                          <Globe className="w-3 h-3 text-[var(--color-text-secondary)]" />
-                        )}
+                        <img 
+                          src={getFaviconUrls(bookmark.url)[0] || ""} 
+                          alt="" 
+                          className="w-3.5 h-3.5"
+                          data-favicon-index="0"
+                          data-bookmark-url={bookmark.url}
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            const currentIndex = parseInt(img.dataset.faviconIndex || "0", 10);
+                            const urls = getFaviconUrls(img.dataset.bookmarkUrl || "");
+                            const nextIndex = currentIndex + 1;
+                            
+                            if (nextIndex < urls.length) {
+                              img.dataset.faviconIndex = nextIndex.toString();
+                              img.src = urls[nextIndex];
+                            } else {
+                              img.style.display = "none";
+                              (img.nextElementSibling as HTMLElement)?.style.setProperty("display", "block");
+                            }
+                          }}
+                        />
+                        <Globe className="w-3 h-3 text-[var(--color-text-secondary)] hidden" />
                       </div>
                       <span className="text-xs font-medium max-w-[100px] truncate group-hover/link:text-[var(--color-accent)] transition-colors">{bookmark.name}</span>
                     </motion.button>

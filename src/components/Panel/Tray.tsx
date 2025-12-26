@@ -26,12 +26,17 @@ export default function Tray({
   const [newAppUrl, setNewAppUrl] = useState("");
   const [newAppName, setNewAppName] = useState("");
 
-  const getFaviconUrl = (url: string) => {
+  const getFaviconUrls = (url: string): string[] => {
     try {
-      const domain = new URL(url.startsWith("http") ? url : `https://${url}`).hostname;
-      return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      const parsedUrl = new URL(url.startsWith("http") ? url : `https://${url}`);
+      const domain = parsedUrl.hostname;
+      const origin = parsedUrl.origin;
+      return [
+        `${origin}/favicon.ico`, // Try direct favicon first
+        `https://www.google.com/s2/favicons?domain=${domain}&sz=64`, // Google as fallback
+      ];
     } catch {
-      return null;
+      return [];
     }
   };
 
@@ -170,12 +175,26 @@ export default function Tray({
                                 {/* Favicon */}
                                 <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden">
                                     <img 
-                                      src={getFaviconUrl(bookmark.url) || ""} 
+                                      src={getFaviconUrls(bookmark.url)[0] || ""} 
                                       alt="" 
                                       className="w-6 h-6 object-contain" 
+                                      data-favicon-index="0"
+                                      data-bookmark-url={bookmark.url}
                                       onError={(e) => {
-                                        e.currentTarget.style.display = "none";
-                                        (e.currentTarget.nextElementSibling as HTMLElement)?.style.setProperty("display", "block");
+                                        const img = e.currentTarget;
+                                        const currentIndex = parseInt(img.dataset.faviconIndex || "0", 10);
+                                        const urls = getFaviconUrls(img.dataset.bookmarkUrl || "");
+                                        const nextIndex = currentIndex + 1;
+                                        
+                                        if (nextIndex < urls.length) {
+                                          // Try the next URL in the list
+                                          img.dataset.faviconIndex = nextIndex.toString();
+                                          img.src = urls[nextIndex];
+                                        } else {
+                                          // All URLs failed, show fallback icon
+                                          img.style.display = "none";
+                                          (img.nextElementSibling as HTMLElement)?.style.setProperty("display", "block");
+                                        }
                                       }} 
                                     />
                                     <Globe className="w-5 h-5 text-gray-400 hidden" />
