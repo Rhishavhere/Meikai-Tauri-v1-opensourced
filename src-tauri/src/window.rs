@@ -1,8 +1,14 @@
-use tauri::{Emitter, Manager, WebviewUrl, LogicalPosition, LogicalSize};
+use tauri::{Emitter, WebviewUrl, LogicalPosition, LogicalSize};
 use tauri::window::WindowBuilder;
 use tauri::webview::WebviewBuilder;
 
-use crate::constants::{TITLE_BAR_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT};
+use crate::constants::{
+    TITLE_BAR_HEIGHT, 
+    WINDOW_WIDTH_PERCENT, 
+    WINDOW_HEIGHT_PERCENT,
+    FALLBACK_WINDOW_WIDTH,
+    FALLBACK_WINDOW_HEIGHT
+};
 
 /// Helper function to create a content window with multi-webview (title bar + content)
 pub fn create_multi_webview_window(
@@ -12,10 +18,21 @@ pub fn create_multi_webview_window(
     content_webview_label: &str,
     url: &str,
 ) -> Result<(), String> {
+    // Calculate window size as percentage of screen, with fallback
+    let (window_width, window_height) = match app.primary_monitor() {
+        Ok(Some(monitor)) => {
+            let screen_size = monitor.size();
+            (
+                (screen_size.width as f64 * WINDOW_WIDTH_PERCENT).round(),
+                (screen_size.height as f64 * WINDOW_HEIGHT_PERCENT).round()
+            )
+        }
+        _ => (FALLBACK_WINDOW_WIDTH, FALLBACK_WINDOW_HEIGHT)
+    };
     // Create the window without decorations
     let window = WindowBuilder::new(app, window_label)
         .title("Meikai Browser")
-        .inner_size(WINDOW_WIDTH, WINDOW_HEIGHT)
+        .inner_size(window_width, window_height)
         .center()
         .resizable(true)
         .decorations(false)

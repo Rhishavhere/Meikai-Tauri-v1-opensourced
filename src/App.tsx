@@ -8,8 +8,47 @@ import { BetaDisclaimer } from './components/BetaDisclaimer';
 import { useSettings } from './hooks/useSettings';
 import { useBookmarks } from './hooks/useBookmarks';
 
-// Global panel window size
-export const PANEL_SIZE = { width: 900, height: 600 };
+// =============================================================================
+// LAYOUT CONFIGURATION (Percentage-based sizing)
+// =============================================================================
+// All sizes are calculated as percentages of the primary monitor's resolution.
+// This ensures consistent proportions across different screen sizes.
+
+/** Panel (main home screen) - percentage of screen dimensions */
+const PANEL_WIDTH_PERCENT = 0.46;   // 47% of screen width
+const PANEL_HEIGHT_PERCENT = 0.56;  // 56% of screen height
+
+/** Dock/Notch (minimized navigation bar) - percentage of screen dimensions */
+const DOCK_WIDTH_PERCENT = 0.36;    // 36% of screen width
+const DOCK_HEIGHT_PERCENT = 0.046;   // 8% of screen height (~86px on 1080p)
+
+/** MiniPanel (expanded dock with search/bookmarks) - percentage of screen dimensions */
+const MINIPANEL_WIDTH_PERCENT = 0.36;   // Same width as dock
+const MINIPANEL_HEIGHT_PERCENT = 0.46;  // 46% of screen height
+
+/** Fallback sizes in pixels (used if monitor detection fails) */
+const FALLBACK_SCREEN = { width: 1920, height: 1080 };
+
+// =============================================================================
+
+/** Helper to calculate pixel sizes from percentages */
+const calculateSizes = (screenWidth: number, screenHeight: number) => ({
+  panel: {
+    width: Math.round(screenWidth * PANEL_WIDTH_PERCENT),
+    height: Math.round(screenHeight * PANEL_HEIGHT_PERCENT),
+  },
+  dock: {
+    width: Math.round(screenWidth * DOCK_WIDTH_PERCENT),
+    height: Math.round(screenHeight * DOCK_HEIGHT_PERCENT),
+  },
+  miniPanel: {
+    width: Math.round(screenWidth * MINIPANEL_WIDTH_PERCENT),
+    height: Math.round(screenHeight * MINIPANEL_HEIGHT_PERCENT),
+  },
+});
+
+// Export for use in other components if needed
+export const PANEL_SIZE = calculateSizes(FALLBACK_SCREEN.width, FALLBACK_SCREEN.height).panel;
 
 interface ContentWindow {
   windowLabel: string;
@@ -22,6 +61,27 @@ function App() {
   const [contentWindows, setContentWindows] = useState<ContentWindow[]>([]);
   const [activeWindowIndex, setActiveWindowIndex] = useState(0);
   const [showMiniPanel, setShowMiniPanel] = useState(false);
+
+  // Helper to get layout sizes directly from monitor
+  const getLayoutSizes = async () => {
+    const monitors = await availableMonitors();
+    if (monitors && monitors.length > 0) {
+      const primary = monitors[0];
+      return calculateSizes(primary.size.width, primary.size.height);
+    }
+    return calculateSizes(FALLBACK_SCREEN.width, FALLBACK_SCREEN.height);
+  };
+
+  // Resize main window to percentage-based panel size on startup
+  useEffect(() => {
+    const initWindowSize = async () => {
+      const { panel } = await getLayoutSizes();
+      const window = getCurrentWindow();
+      await window.setSize(new PhysicalSize(panel.width, panel.height));
+      await window.center();
+    };
+    initWindowSize();
+  }, []);
 
   // Settings management - lifted to App level to persist across mode switches
   const {
@@ -97,9 +157,10 @@ function App() {
       if (newWindows.length === 0) {
         // No more windows, go back to panel mode
         const appWindow = getCurrentWindow();
+        const { panel } = await getLayoutSizes();
         setUrl("");
         await appWindow.setAlwaysOnTop(false);
-        await appWindow.setSize(new PhysicalSize(PANEL_SIZE.width, PANEL_SIZE.height));
+        await appWindow.setSize(new PhysicalSize(panel.width, panel.height));
         await appWindow.center();
         setIsNotchMode(false);
         setContentWindows([]);
@@ -129,30 +190,36 @@ function App() {
   }, [contentWindows, activeWindowIndex]);
 
   const transformToNotch = async () => {
-    const window = getCurrentWindow();
-    const monitors = await availableMonitors();
+    try {
+      const window = getCurrentWindow();
+      const monitors = await availableMonitors();
 
-    if (monitors && monitors.length > 0) {
-      const primaryMonitor = monitors[0];
-      const screenWidth = primaryMonitor.size.width;
+      if (monitors && monitors.length > 0) {
+        const screenWidth = monitors[0].size.width;
+        const { dock } = await getLayoutSizes();
 
-      // Transform to notch at top of screen
-      const x = (screenWidth - 700) / 2;
-      await window.setPosition(new PhysicalPosition(x, 10));
-      await window.setSize(new PhysicalSize(700, 50));
-      await window.setAlwaysOnTop(false);
+        // Transform to notch at top of screen (centered)
+        const x = Math.round((screenWidth - dock.width) / 2);
+        
+        await window.setPosition(new PhysicalPosition(x, 10));
+        await window.setSize(new PhysicalSize(dock.width, dock.height));
+        await window.setAlwaysOnTop(false);
 
-      setIsNotchMode(true);
+        setIsNotchMode(true);
+      }
+    } catch (error) {
+      console.error("transformToNotch ERROR:", error);
     }
   };
 
   const transformToPanel = async () => {
     const window = getCurrentWindow();
+    const { panel } = await getLayoutSizes();
 
     // Transform back to panel at center
     setUrl("")
     await window.setAlwaysOnTop(false);
-    await window.setSize(new PhysicalSize(PANEL_SIZE.width, PANEL_SIZE.height));
+    await window.setSize(new PhysicalSize(panel.width, panel.height));
     await window.center();
 
     setIsNotchMode(false);
@@ -184,8 +251,9 @@ function App() {
   // Handler for opening new window from MiniPanel
   const handleNewWindow = async () => {
     const window = getCurrentWindow();
-    // Expand dock height to show MiniPanel
-    await window.setSize(new PhysicalSize(700, 500));
+    const { miniPanel } = await getLayoutSizes();
+    // Expand dock to show MiniPanel
+    await window.setSize(new PhysicalSize(miniPanel.width, miniPanel.height));
     setShowMiniPanel(true);
   };
 
@@ -206,7 +274,8 @@ function App() {
     setUrl(fullUrl);
     setShowMiniPanel(false);
     // Shrink dock back to notch size
-    await appWindow.setSize(new PhysicalSize(700, 40));
+    const { dock } = await getLayoutSizes();
+    await appWindow.setSize(new PhysicalSize(dock.width, dock.height));
   };
 
   // Handler for switching between windows (tab-like behavior)
@@ -229,9 +298,10 @@ function App() {
   // Handler for closing MiniPanel without action
   const handleCloseMiniPanel = async () => {
     const window = getCurrentWindow();
+    const { dock } = await getLayoutSizes();
     setShowMiniPanel(false);
     // Shrink dock back to notch size
-    await window.setSize(new PhysicalSize(700, 40));
+    await window.setSize(new PhysicalSize(dock.width, dock.height));
   };
 
   const handleClose = async () => {
