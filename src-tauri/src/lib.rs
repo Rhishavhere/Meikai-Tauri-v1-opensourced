@@ -1,4 +1,4 @@
-use tauri::{Emitter, Manager, LogicalPosition, LogicalSize};
+use tauri::{Emitter, Manager, LogicalPosition, LogicalSize, PhysicalSize};
 
 mod constants;
 mod window;
@@ -8,7 +8,11 @@ mod url_monitor;
 mod titlebar;
 mod search;
 
-use constants::TITLE_BAR_HEIGHT;
+use constants::{
+    TITLE_BAR_HEIGHT,
+    PANEL_WIDTH_PERCENT,
+    PANEL_HEIGHT_PERCENT,
+};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -17,6 +21,21 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
+        .setup(|app| {
+            // Resize main window to percentage-based size BEFORE React loads
+            // This eliminates the size flash that would occur if done in React
+            if let Some(main_window) = app.get_webview_window("main") {
+                if let Ok(Some(monitor)) = main_window.primary_monitor() {
+                    let screen_size = monitor.size();
+                    let panel_width = (screen_size.width as f64 * PANEL_WIDTH_PERCENT).round() as u32;
+                    let panel_height = (screen_size.height as f64 * PANEL_HEIGHT_PERCENT).round() as u32;
+                    
+                    let _ = main_window.set_size(PhysicalSize::new(panel_width, panel_height));
+                    let _ = main_window.center();
+                }
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             window::create_content_window,
             navigation::navigate_to_url,

@@ -15,7 +15,7 @@ import { useBookmarks } from './hooks/useBookmarks';
 // This ensures consistent proportions across different screen sizes.
 
 /** Panel (main home screen) - percentage of screen dimensions */
-const PANEL_WIDTH_PERCENT = 0.46;   // 47% of screen width
+const PANEL_WIDTH_PERCENT = 0.47;   // 47% of screen width
 const PANEL_HEIGHT_PERCENT = 0.56;  // 56% of screen height
 
 /** Dock/Notch (minimized navigation bar) - percentage of screen dimensions */
@@ -72,16 +72,6 @@ function App() {
     return calculateSizes(FALLBACK_SCREEN.width, FALLBACK_SCREEN.height);
   };
 
-  // Resize main window to percentage-based panel size on startup
-  useEffect(() => {
-    const initWindowSize = async () => {
-      const { panel } = await getLayoutSizes();
-      const window = getCurrentWindow();
-      await window.setSize(new PhysicalSize(panel.width, panel.height));
-      await window.center();
-    };
-    initWindowSize();
-  }, []);
 
   // Settings management - lifted to App level to persist across mode switches
   const {
