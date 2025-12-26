@@ -128,7 +128,7 @@ export default function Settings({
       animate={{ opacity: 1, x: 0 }}
       exit={settings.animationsEnabled ? { opacity: 0, x: -20 } : undefined}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="w-full h-full flex flex-col overflow-hidden bg-[var(--color-bg-secondary)]"
+      className="w-full h-full flex flex-col overflow-hidden bg-[var(--color-bg-secondary)] relative rounded-xl"
     >
       {/* Notification Toast */}
       <AnimatePresence>
@@ -404,7 +404,7 @@ export default function Settings({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-6 rounded-xl overflow-hidden"
             onClick={() => setShowSearchEngineModal(false)}
           >
             <motion.div
@@ -453,7 +453,7 @@ export default function Settings({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-6 rounded-xl overflow-hidden"
             onClick={() => setShowQuickLinksModal(false)}
           >
             <motion.div
@@ -499,7 +499,7 @@ export default function Settings({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-6 rounded-xl overflow-hidden"
             onClick={() => setShowClearConfirm(null)}
           >
             <motion.div
