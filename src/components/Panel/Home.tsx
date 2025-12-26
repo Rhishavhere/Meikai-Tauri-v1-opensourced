@@ -1,5 +1,6 @@
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { 
   Search, 
   Globe, 
@@ -53,7 +54,33 @@ export default function HomeTab({
   const [isFocused, setIsFocused] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showComingSoon, setShowComingSoon] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Debounced search suggestions fetch
+  useEffect(() => {
+    if (!url.trim() || url.trim().length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const results = await invoke<string[]>("get_search_suggestions", { query: url });
+        setSuggestions(results);
+        setShowSuggestions(results.length > 0);
+        setSelectedIndex(-1);
+      } catch {
+        setSuggestions([]);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [url]);
 
   // Time update effect
   useEffect(() => {
@@ -81,7 +108,11 @@ export default function HomeTab({
     const trimmedUrl = url.trim();
     if (!trimmedUrl) return;
 
-    let fullUrl = trimmedUrl;
+    navigateToUrl(trimmedUrl);
+  };
+
+  const navigateToUrl = (query: string) => {
+    let fullUrl = query;
 
     const isUrl =
       (fullUrl.includes(".") && !fullUrl.includes(" ")) ||
@@ -96,7 +127,42 @@ export default function HomeTab({
       fullUrl = getSearchUrl(fullUrl);
     }
 
+    setShowSuggestions(false);
+    setSuggestions([]);
     onNavigate(fullUrl);
+  };
+
+  const handleSelectSuggestion = (suggestion: string) => {
+    setUrl(suggestion);
+    navigateToUrl(suggestion);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev < suggestions.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev > 0 ? prev - 1 : suggestions.length - 1
+        );
+        break;
+      case 'Enter':
+        if (selectedIndex >= 0) {
+          e.preventDefault();
+          handleSelectSuggestion(suggestions[selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        break;
+    }
   };
 
   const getFaviconUrl = (bookmarkUrl: string) => {
@@ -213,10 +279,10 @@ export default function HomeTab({
         </div>
 
         {/* Main Content - Bento Grid Layout */}
-        <div className="flex-1 grid grid-cols-11 gap-4 max-h-[calc(100vh-140px)] overflow-hidden">
+        <div className="flex-1 grid grid-cols-10 gap-4 max-h-[calc(100vh-140px)] overflow-hidden">
           
           {/* Left Column */}
-          <div className="col-span-3 flex flex-col gap-4">
+          <div className="col-span-2 flex flex-col gap-4">
             
             {/* Time Widget */}
             <motion.div 
@@ -228,7 +294,7 @@ export default function HomeTab({
                   <Clock className="w-4 h-4 text-[var(--color-accent)]" />
                   <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Local Time</span>
                 </div>
-                <p className="text-2xl font-medium tracking-tight font-zain">{formattedTime}</p>
+                <p className="text-2xl text-[var(--color-text-secondary)] font-medium tracking-tight font-zain">{formattedTime}</p>
                 <p className="text-xs text-[var(--color-text-secondary)] mt-1 flex items-center gap-1.5">
                   <Calendar className="w-3 h-3" />
                   {currentTime.toLocaleDateString([], { year: 'numeric' })}
@@ -262,7 +328,7 @@ export default function HomeTab({
               className="bg-[var(--color-bg-primary)]/30 rounded-2xl p-4"
             >
               <div className="text-center space-y-1">
-                <p className="text-xs font-light text-[var(--color-text-primary)]/50">Meikai - v0.1.4 · Private Beta</p>
+                <p className="text-xs font-light text-[var(--color-text-primary)]/50">Meikai - v0.1.4<br/> Private Beta</p>
                 {/* <p className="text-[10px] text-[var(--color-text-secondary)]/60">
                   
                 </p> */}
@@ -305,7 +371,12 @@ export default function HomeTab({
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
+                    onBlur={() => {
+                      setIsFocused(false);
+                      // Delay hiding to allow click on suggestion
+                      setTimeout(() => setShowSuggestions(false), 150);
+                    }}
+                    onKeyDown={handleKeyDown}
                     className="flex-1 bg-transparent text-sm focus:outline-none placeholder-[var(--color-text-secondary)]/40"
                     placeholder={`Search ${SEARCH_ENGINES[settings.searchEngine].name} or enter URL...`}
                     autoFocus
@@ -321,6 +392,36 @@ export default function HomeTab({
                     </motion.button>
                   )}
                 </div>
+
+                {/* Suggestions Dropdown */}
+                <AnimatePresence>
+                  {showSuggestions && suggestions.length > 0 && (
+                    <motion.div
+                      ref={suggestionsRef}
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 right-0 mt-2 bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded-xl shadow-xl overflow-hidden z-50"
+                    >
+                      {suggestions.map((suggestion, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => handleSelectSuggestion(suggestion)}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
+                            index === selectedIndex
+                              ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
+                              : 'text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]'
+                          }`}
+                        >
+                          <Search className="w-3.5 h-3.5 text-[var(--color-text-secondary)] shrink-0" />
+                          <span className="truncate">{suggestion}</span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </form>
 
               {/* Quick Links */}
