@@ -169,7 +169,7 @@ export function Panel({
         {/* Tab Content with AnimatePresence for smooth transitions */}
         <div
           data-tauri-drag-region
-          className="flex-1 flex items-center justify-center w-full overflow-hidden"
+          className="flex-1 flex items-center justify-center w-full overflow-hidden relative rounded-xl"
         >
           <AnimatePresence mode="wait">
             {renderTabContent()}
