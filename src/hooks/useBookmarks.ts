@@ -47,15 +47,13 @@ async function saveBookmarksToFile(bookmarks: Bookmark[]): Promise<void> {
     // If that fails, we try to create the directory first
     try {
       await writeTextFile(BOOKMARKS_FILE, JSON.stringify(bookmarks, null, 2), { baseDir: BaseDirectory.AppData });
-    } catch (writeError) {
+    } catch {
       // Directory might not exist, try to create it
-      console.log("First write attempt failed, creating directory...", writeError);
       await mkdir("", { baseDir: BaseDirectory.AppData, recursive: true });
       await writeTextFile(BOOKMARKS_FILE, JSON.stringify(bookmarks, null, 2), { baseDir: BaseDirectory.AppData });
     }
-    console.log("Bookmarks saved successfully");
-  } catch (error) {
-    console.error("Failed to save bookmarks to file:", error);
+  } catch {
+    // Failed to save bookmarks silently
   }
 }
 

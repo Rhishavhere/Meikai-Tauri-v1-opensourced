@@ -2,7 +2,7 @@
 name = "meikai-browser"
 version = "0.1.0"
 description = "A Minimal Browser"
-authors = ["you"]
+authors = ["Rhishav Dhali"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

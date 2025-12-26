@@ -51,49 +51,39 @@ export const SEARCH_ENGINES: Record<SearchEngine, { name: string; url: string; i
 
 async function loadSettingsFromFile(): Promise<Settings> {
   try {
-    console.log("[Settings] Loading settings from file...");
     const fileExists = await exists(SETTINGS_FILE, { baseDir: BaseDirectory.AppData });
-    console.log("[Settings] File exists:", fileExists);
     
     if (!fileExists) {
-      console.log("[Settings] Creating default settings file...");
       await saveSettingsToFile(DEFAULT_SETTINGS);
       return DEFAULT_SETTINGS;
     }
     
     const content = await readTextFile(SETTINGS_FILE, { baseDir: BaseDirectory.AppData });
-    console.log("[Settings] Loaded content:", content);
     const loaded = JSON.parse(content);
     // Merge with defaults to handle new settings
     const merged = { ...DEFAULT_SETTINGS, ...loaded };
-    console.log("[Settings] Merged settings:", merged);
     return merged;
   } catch (error) {
-    console.error("[Settings] Failed to load settings from file:", error);
     return DEFAULT_SETTINGS;
   }
 }
 
 async function saveSettingsToFile(settings: Settings): Promise<void> {
   try {
-    console.log("[Settings] Saving settings to file:", settings);
-    
     // Check if directory exists, create if not
     try {
       const dirExists = await exists("", { baseDir: BaseDirectory.AppData });
       if (!dirExists) {
-        console.log("[Settings] Creating AppData directory...");
         await mkdir("", { baseDir: BaseDirectory.AppData, recursive: true });
       }
-    } catch (dirError) {
-      console.log("[Settings] Directory check/create skipped (may already exist):", dirError);
+    } catch {
+      // Directory check/create may fail if already exists
     }
     
     const content = JSON.stringify(settings, null, 2);
     await writeTextFile(SETTINGS_FILE, content, { baseDir: BaseDirectory.AppData });
-    console.log("[Settings] Settings saved successfully!");
-  } catch (error) {
-    console.error("[Settings] Failed to save settings to file:", error);
+  } catch {
+    // Settings save failed silently
   }
 }
 
@@ -104,7 +94,6 @@ export function useSettings() {
   // Load settings on mount
   useEffect(() => {
     loadSettingsFromFile().then((loaded) => {
-      console.log("[Settings] Setting state with loaded settings:", loaded);
       setSettings(loaded);
       setIsLoading(false);
       // Apply theme on load
@@ -115,19 +104,16 @@ export function useSettings() {
   // Save to file whenever settings change (after initial load)
   useEffect(() => {
     if (!isLoading) {
-      console.log("[Settings] Settings changed, saving:", settings);
       saveSettingsToFile(settings);
     }
   }, [settings, isLoading]);
 
   // Apply theme to document
   const applyTheme = useCallback((theme: Theme) => {
-    console.log("[Settings] Applying theme:", theme);
     document.documentElement.setAttribute("data-theme", theme);
   }, []);
 
   const updateSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
-    console.log(`[Settings] Updating ${key} to:`, value);
     setSettings((prev) => {
       const newSettings = { ...prev, [key]: value };
       if (key === "theme") {
@@ -154,7 +140,6 @@ export function useSettings() {
   }, [updateSetting]);
 
   const resetSettings = useCallback(() => {
-    console.log("[Settings] Resetting to defaults");
     setSettings(DEFAULT_SETTINGS);
     applyTheme(DEFAULT_SETTINGS.theme);
   }, [applyTheme]);

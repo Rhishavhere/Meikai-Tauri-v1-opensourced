@@ -119,15 +119,12 @@ function App() {
       const primaryMonitor = monitors[0];
       const screenWidth = primaryMonitor.size.width;
 
-      console.log('Transforming to notch mode...', { screenWidth });
-
       // Transform to notch at top of screen
       const x = (screenWidth - 700) / 2;
       await window.setPosition(new PhysicalPosition(x, 10));
       await window.setSize(new PhysicalSize(700, 50));
       await window.setAlwaysOnTop(false);
 
-      console.log('Notch mode activated');
       setIsNotchMode(true);
     }
   };
