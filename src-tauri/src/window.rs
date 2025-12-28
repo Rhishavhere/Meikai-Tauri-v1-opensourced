@@ -5,7 +5,7 @@ use tauri::webview::WebviewBuilder;
 use crate::constants::{
     TITLE_BAR_HEIGHT, 
     WINDOW_WIDTH_PERCENT, 
-    WINDOW_HEIGHT_PERCENT,
+    WINDOW_ASPECT_RATIO,
     FALLBACK_WINDOW_WIDTH,
     FALLBACK_WINDOW_HEIGHT
 };
@@ -18,14 +18,14 @@ pub fn create_multi_webview_window(
     content_webview_label: &str,
     url: &str,
 ) -> Result<(), String> {
-    // Calculate window size as percentage of screen, with fallback
+    // Calculate window size as percentage of screen width, height from 7:4 aspect ratio
     let (window_width, window_height) = match app.primary_monitor() {
         Ok(Some(monitor)) => {
             let screen_size = monitor.size();
-            (
-                (screen_size.width as f64 * WINDOW_WIDTH_PERCENT).round(),
-                (screen_size.height as f64 * WINDOW_HEIGHT_PERCENT).round()
-            )
+            let width = (screen_size.width as f64 * WINDOW_WIDTH_PERCENT).round();
+            // Height = width * (height_ratio / width_ratio) for 7:4 aspect ratio
+            let height = (width * WINDOW_ASPECT_RATIO.1 / WINDOW_ASPECT_RATIO.0).round();
+            (width, height)
         }
         _ => (FALLBACK_WINDOW_WIDTH, FALLBACK_WINDOW_HEIGHT)
     };

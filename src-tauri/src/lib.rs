@@ -11,7 +11,7 @@ mod search;
 use constants::{
     TITLE_BAR_HEIGHT,
     PANEL_WIDTH_PERCENT,
-    PANEL_HEIGHT_PERCENT,
+    PANEL_ASPECT_RATIO,
 };
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -28,7 +28,8 @@ pub fn run() {
                 if let Ok(Some(monitor)) = main_window.primary_monitor() {
                     let screen_size = monitor.size();
                     let panel_width = (screen_size.width as f64 * PANEL_WIDTH_PERCENT).round() as u32;
-                    let panel_height = (screen_size.height as f64 * PANEL_HEIGHT_PERCENT).round() as u32;
+                    // Height = width * (height_ratio / width_ratio) for 3:2 aspect ratio
+                    let panel_height = (panel_width as f64 * PANEL_ASPECT_RATIO.1 / PANEL_ASPECT_RATIO.0).round() as u32;
                     
                     let _ = main_window.set_size(PhysicalSize::new(panel_width, panel_height));
                     let _ = main_window.center();
