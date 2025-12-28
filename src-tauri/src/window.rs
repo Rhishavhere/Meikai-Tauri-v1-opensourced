@@ -36,6 +36,7 @@ pub fn create_multi_webview_window(
         .center()
         .resizable(true)
         .decorations(false)
+        .transparent(true)
         .build()
         .map_err(|e| e.to_string())?;
 

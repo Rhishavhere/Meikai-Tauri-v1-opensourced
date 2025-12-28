@@ -62,12 +62,41 @@ function TitleBar({ windowLabel, initialUrl }: TitleBarProps) {
     }
   };
 
+  // Corner radius size in pixels
+  const cornerRadius = 12;
+
   return (
     <div 
-      className="flex items-center justify-between h-[20px] bg-[#101010] select-none font-poppins"
+      className="relative flex items-center justify-between h-[20px] bg-[#101010] select-none font-poppins"
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
     >
+      {/* Top-left corner overlay */}
+      <div 
+        className="absolute top-0 left-0 pointer-events-none z-50"
+        style={{ width: cornerRadius, height: cornerRadius }}
+      >
+        <svg width={cornerRadius} height={cornerRadius} viewBox={`0 0 ${cornerRadius} ${cornerRadius}`}>
+          <path
+            d={`M 0 0 L ${cornerRadius} 0 L ${cornerRadius} ${cornerRadius} A ${cornerRadius} ${cornerRadius} 0 0 0 0 0 Z`}
+            fill="#101010"
+          />
+        </svg>
+      </div>
+
+      {/* Top-right corner overlay */}
+      <div 
+        className="absolute top-0 right-0 pointer-events-none z-50"
+        style={{ width: cornerRadius, height: cornerRadius }}
+      >
+        <svg width={cornerRadius} height={cornerRadius} viewBox={`0 0 ${cornerRadius} ${cornerRadius}`}>
+          <path
+            d={`M 0 0 L ${cornerRadius} 0 L ${cornerRadius} ${cornerRadius} A ${cornerRadius} ${cornerRadius} 0 0 1 0 0 Z`}
+            fill="#101010"
+          />
+        </svg>
+      </div>
+
       {/* Drag region - left side */}
       <div 
         className="flex-1 h-full flex items-center pl-3 cursor-default" 

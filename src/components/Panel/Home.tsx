@@ -223,85 +223,70 @@ export default function HomeTab({
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] shadow-lg"
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] shadow-lg"
           >
-            <span className="font-poppins text-sm text-[var(--color-text-primary)]">Coming soon!</span>
+            <span className="font-poppins text-[clamp(0.65rem,1.5vw,0.875rem)] text-[var(--color-text-primary)]">Coming soon!</span>
           </motion.div>
         )}
       </AnimatePresence>
       {/* Enhanced Background Ambience */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-30%] right-[-15%] w-[700px] h-[700px] bg-[var(--color-accent)]/8 blur-[150px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-[-25%] left-[-15%] w-[600px] h-[600px] bg-blue-500/6 blur-[130px] rounded-full animate-pulse" style={{ animationDuration: '10s' }} />
-        <div className="absolute top-[40%] left-[30%] w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '12s' }} />
+        <div className="absolute top-[-30%] right-[-15%] w-[clamp(300px,50vw,700px)] h-[clamp(300px,50vw,700px)] bg-[var(--color-accent)]/8 blur-[150px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-25%] left-[-15%] w-[clamp(250px,45vw,600px)] h-[clamp(250px,45vw,600px)] bg-blue-500/6 blur-[130px] rounded-full animate-pulse" style={{ animationDuration: '10s' }} />
+        <div className="absolute top-[40%] left-[30%] w-[clamp(180px,30vw,400px)] h-[clamp(180px,30vw,400px)] bg-purple-500/5 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '12s' }} />
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: 'linear-gradient(var(--color-text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--color-text-primary) 1px, transparent 1px)',
-          backgroundSize: '60px 60px'
+          backgroundSize: 'clamp(30px,5vw,60px) clamp(30px,5vw,60px)'
         }} />
       </div>
 
       <motion.div 
-        className="w-full h-full p-6 flex flex-col z-10"
+        className="w-full h-full p-[clamp(0.75rem,2vw,1.5rem)] flex flex-col z-10 mb-8"
         variants={shouldAnimate ? containerVariants : undefined}
         initial={shouldAnimate ? "hidden" : "visible"}
         animate="visible"
       >
         {/* Compact Header */}
-        <div className="flex justify-between items-center mb-6">
-          <motion.div variants={itemVariants} className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center">
+        <div className="flex justify-between items-center mb-[clamp(0.75rem,2vw,1.5rem)]">
+          <motion.div variants={itemVariants} className="flex items-center gap-[clamp(0.5rem,1.5vw,1rem)]">
+            <div className="w-[clamp(2rem,4vw,2.5rem)] h-[clamp(2rem,4vw,2.5rem)] rounded-xl overflow-hidden flex items-center justify-center">
               <img 
                 src={settings.theme === "dark" ? "/logo-dark.png" : "/logo-light.png"} 
                 alt="Meikai" 
-                className={`w-8 h-8 object-contain`}
+                className="w-[clamp(1.25rem,3vw,2rem)] h-[clamp(1.25rem,3vw,2rem)] object-contain"
               />
             </div>
             <div>
-              <h1 className="text-lg font-semibold tracking-tight">
+              <h1 className="text-[clamp(0.875rem,2vw,1.125rem)] font-semibold tracking-tight">
                 {getGreeting()}
               </h1>
-              <p className="text-xs text-[var(--color-text-secondary)]">
+              <p className="text-[clamp(0.6rem,1.2vw,0.75rem)] text-[var(--color-text-secondary)]">
                 {formattedDate}
               </p>
             </div>
           </motion.div>
-
-          {/* <motion.div variants={itemVariants} className="flex gap-2">
-            <button 
-              onClick={onOpenProfile}
-              className="p-2.5 rounded-xl bg-[var(--color-bg-primary)]/80 backdrop-blur-sm border border-[var(--color-border)] hover:border-[var(--color-accent)]/50 transition-all text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:scale-105 active:scale-95"
-            >
-              <User className="w-4 h-4" />
-            </button>
-            <button 
-              onClick={onOpenSettings}
-              className="p-2.5 rounded-xl bg-[var(--color-bg-primary)]/80 backdrop-blur-sm border border-[var(--color-border)] hover:border-[var(--color-accent)]/50 transition-all text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:scale-105 active:scale-95"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-          </motion.div> */}
         </div>
 
-        {/* Main Content - Bento Grid Layout */}
-        <div className="flex-1 grid grid-cols-10 gap-4 max-h-[calc(100vh-140px)] overflow-hidden">
+        {/* Main Content - Responsive Bento Grid Layout */}
+        <div className="flex-1 grid grid-cols-10 gap-[clamp(0.5rem,1.5vw,1rem)] max-h-[calc(100vh-clamp(100px,15vh,140px))] overflow-hidden">
           
-          {/* Left Column */}
-          <div className="col-span-2 flex flex-col gap-4">
+          {/* Left Column - Icon-only on small screens, full on medium+ */}
+          <div className="col-span-2 md:col-span-2 flex flex-col gap-[clamp(0.5rem,1vw,1rem)]">
             
             {/* Time Widget */}
             <motion.div 
               variants={itemVariants}
-              className="bg-gradient-to-br from-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/80 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-5 relative overflow-hidden group transition-all duration-300"
+              className="bg-gradient-to-br from-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/80 backdrop-blur-xl rounded-[clamp(0.75rem,1.5vw,1rem)] border border-[var(--color-border)] p-[clamp(0.75rem,1.5vw,1.25rem)] relative overflow-hidden group transition-all duration-300"
             >
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <Clock className="w-4 h-4 text-[var(--color-accent)]" />
-                  <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Local Time</span>
+                <div className="flex items-center gap-[clamp(0.25rem,0.75vw,0.5rem)] mb-[clamp(0.5rem,1vw,0.75rem)]">
+                  <Clock className="w-[clamp(0.75rem,1.5vw,1rem)] h-[clamp(0.75rem,1.5vw,1rem)] text-[var(--color-accent)]" />
+                  <span className="text-[clamp(0.5rem,0.9vw,0.625rem)] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Local Time</span>
                 </div>
-                <p className="text-2xl text-[var(--color-text-secondary)] font-medium tracking-tight font-zain">{formattedTime}</p>
-                <p className="text-xs text-[var(--color-text-secondary)] mt-1 flex items-center gap-1.5">
-                  <Calendar className="w-3 h-3" />
+                <p className="text-[clamp(1rem,2.5vw,1.5rem)] text-[var(--color-text-secondary)] font-medium tracking-tight font-zain">{formattedTime}</p>
+                <p className="text-[clamp(0.55rem,1vw,0.75rem)] text-[var(--color-text-secondary)] mt-1 flex items-center gap-1">
+                  <Calendar className="w-[clamp(0.5rem,1vw,0.75rem)] h-[clamp(0.5rem,1vw,0.75rem)]" />
                   {currentTime.toLocaleDateString([], { year: 'numeric' })}
                 </p>
               </div>
@@ -310,7 +295,7 @@ export default function HomeTab({
             {/* Quick Actions - Vertical Card */}
             <motion.div 
               variants={itemVariants}
-              className="flex-1 bg-[var(--color-bg-primary)]/60 backdrop-blur-sm rounded-2xl border border-[var(--color-border)] p-3 flex flex-col gap-1"
+              className="flex-1 bg-[var(--color-bg-primary)]/60 backdrop-blur-sm rounded-[clamp(0.75rem,1.5vw,1rem)] border border-[var(--color-border)] p-[clamp(0.375rem,1vw,0.75rem)] flex flex-col gap-[clamp(0.125rem,0.5vw,0.25rem)]"
             >
               {QUICK_ACTIONS.map((action) => {
                 const Icon = action.icon;
@@ -318,10 +303,11 @@ export default function HomeTab({
                   <button
                     key={action.id}
                     onClick={() => handleQuickAction(action.id)}
-                    className="group flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--color-bg-secondary)] transition-all duration-200 text-left"
+                    title={action.label}
+                    className="group flex items-center justify-start gap-[clamp(0.375rem,1vw,0.75rem)] p-[clamp(0.25rem,0.75vw,0.5rem)] rounded-[clamp(0.5rem,1vw,0.75rem)] hover:bg-[var(--color-bg-secondary)] transition-all duration-200 text-left"
                   >
-                    <Icon className="w-4 h-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0" />
-                    <span className="text-xs text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">{action.label}</span>
+                    <Icon className="w-[clamp(0.875rem,1.25vw,1rem)] h-[clamp(0.875rem,1.25vw,1rem)] text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0" />
+                    <span className="truncate max-w-[clamp(2rem,4vw)] text-[clamp(0.5rem,2vw,0.75rem)] text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">{action.label}</span>
                   </button>
                 );
               })}
@@ -330,13 +316,10 @@ export default function HomeTab({
             {/* Meikai Info */}
             <motion.div 
               variants={itemVariants}
-              className="bg-[var(--color-bg-primary)]/30 rounded-2xl p-4"
+              className="bg-[var(--color-bg-primary)]/30 rounded-[clamp(0.75rem,1.5vw,1rem)] p-[clamp(0.5rem,1vw,1rem)]"
             >
               <div className="text-center space-y-1">
-                <p className="text-xs font-light text-[var(--color-text-primary)]/50">Meikai - v0.1.4<br/> Private Beta</p>
-                {/* <p className="text-[10px] text-[var(--color-text-secondary)]/60">
-                  
-                </p> */}
+                <p className="text-[clamp(0.5rem,0.9vw,0.75rem)] font-light text-[var(--color-text-primary)]/50">Meikai - v0.1.4<br/> Private Beta</p>
               </div>
             </motion.div>
           </div>
@@ -344,32 +327,32 @@ export default function HomeTab({
           {/* Center - Search & Brand */}
           <motion.div 
             variants={itemVariants}
-            className="col-span-8 bg-gradient-to-br from-[var(--color-bg-primary)] via-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/90 backdrop-blur-xl rounded-2xl border border-[var(--color-border)] p-8 flex flex-col justify-center items-center relative overflow-hidden group transition-all duration-500"
+            className="col-span-8 bg-gradient-to-br from-[var(--color-bg-primary)] via-[var(--color-bg-primary)] to-[var(--color-bg-primary)]/90 backdrop-blur-xl rounded-[clamp(0.75rem,2vw,1rem)] border border-[var(--color-border)] p-[clamp(1rem,3vw,2rem)] flex flex-col justify-center items-center relative overflow-hidden group transition-all duration-500"
           >
             {/* Decorative elements */}
-            <div className="absolute top-4 right-4 w-32 h-32 bg-[var(--color-accent)]/8 blur-3xl rounded-full" />
-            <div className="absolute bottom-4 left-4 w-24 h-24 bg-blue-500/5 blur-2xl rounded-full" />
+            <div className="absolute top-4 right-4 w-[clamp(4rem,10vw,8rem)] h-[clamp(4rem,10vw,8rem)] bg-[var(--color-accent)]/8 blur-3xl rounded-full" />
+            <div className="absolute bottom-4 left-4 w-[clamp(3rem,8vw,6rem)] h-[clamp(3rem,8vw,6rem)] bg-blue-500/5 blur-2xl rounded-full" />
             <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-secondary)]/30 to-transparent opacity-50" />
             
             <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
               {/* Brand */}
-              <div className="mb-8 text-center">
-                <h2 className="font-tangerine text-7xl text-[var(--color-accent)] opacity-90 mb-2">Meikai</h2>
-                <p className="text-xs text-[var(--color-text-secondary)]/60 uppercase tracking-[0.3em]">Seamless <span className="text-[var(--color-accent)]">Browsing</span></p>
+              <div className="mb-[clamp(1rem,3vw,2rem)] text-center">
+                <h2 className="font-tangerine text-[clamp(2.5rem,8vw,4.5rem)] text-[var(--color-accent)] opacity-90 mb-[clamp(0.25rem,0.5vw,0.5rem)]">Meikai</h2>
+                <p className="text-[clamp(0.5rem,2vw,0.75rem)] text-[var(--color-text-secondary)]/60 uppercase tracking-[clamp(0.1em,0.5vw,0.3em)]">Seamless <span className="text-[var(--color-accent)]">Browsing</span></p>
               </div>
                
               {/* Search Bar */}
               <form onSubmit={handleSubmit} className="w-full relative">
                 <div className={`
-                  flex items-center gap-3 w-full h-12 px-5
-                  bg-[var(--color-bg-secondary)]/80 backdrop-blur-sm rounded-xl
+                  flex items-center gap-[clamp(0.375rem,1vw,0.75rem)] w-full h-[clamp(2.25rem,5vw,3rem)] px-[clamp(0.75rem,2vw,1.25rem)]
+                  bg-[var(--color-bg-secondary)]/80 backdrop-blur-sm rounded-[clamp(0.5rem,1.5vw,0.75rem)]
                   border-2 transition-all duration-300
                   ${isFocused 
                     ? 'border-[var(--color-accent)] shadow-lg shadow-[var(--color-accent)]/10' 
                     : 'border-transparent hover:border-[var(--color-border)]'
                   }
                 `}>
-                  <Search className={`w-4 h-4 shrink-0 transition-colors ${isFocused ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`} />
+                  <Search className={`w-[clamp(0.75rem,1.5vw,1rem)] h-[clamp(0.75rem,1.5vw,1rem)] shrink-0 transition-colors ${isFocused ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`} />
                   <input
                     ref={inputRef}
                     type="text"
@@ -382,7 +365,7 @@ export default function HomeTab({
                       setTimeout(() => setShowSuggestions(false), 150);
                     }}
                     onKeyDown={handleKeyDown}
-                    className="flex-1 bg-transparent text-sm focus:outline-none placeholder-[var(--color-text-secondary)]/40"
+                    className="flex-1 bg-transparent text-[clamp(0.7rem,1.5vw,0.875rem)] focus:outline-none placeholder-[var(--color-text-secondary)]/40"
                     placeholder={`Search ${SEARCH_ENGINES[settings.searchEngine].name} or enter URL...`}
                     autoFocus
                   />
@@ -391,9 +374,9 @@ export default function HomeTab({
                       type="submit"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="p-1.5 rounded-lg bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] transition-colors"
+                      className="p-[clamp(0.25rem,0.75vw,0.375rem)] rounded-[clamp(0.25rem,0.75vw,0.5rem)] bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] transition-colors"
                     >
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-[clamp(0.625rem,1.25vw,0.875rem)] h-[clamp(0.625rem,1.25vw,0.875rem)]" />
                     </motion.button>
                   )}
                 </div>
@@ -407,20 +390,20 @@ export default function HomeTab({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 right-0 mt-2 bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded-xl shadow-xl overflow-hidden z-50"
+                      className="absolute top-full left-0 right-0 mt-2 bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded-[clamp(0.5rem,1.5vw,0.75rem)] shadow-xl overflow-hidden z-50"
                     >
                       {suggestions.map((suggestion, index) => (
                         <button
                           key={index}
                           type="button"
                           onClick={() => handleSelectSuggestion(suggestion)}
-                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
+                          className={`w-full flex items-center gap-[clamp(0.375rem,1vw,0.75rem)] px-[clamp(0.5rem,1.5vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] text-left text-[clamp(0.65rem,1.25vw,0.875rem)] transition-colors ${
                             index === selectedIndex
                               ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
                               : 'text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]'
                           }`}
                         >
-                          <Search className="w-3.5 h-3.5 text-[var(--color-text-secondary)] shrink-0" />
+                          <Search className="w-[clamp(0.625rem,1.25vw,0.875rem)] h-[clamp(0.625rem,1.25vw,0.875rem)] text-[var(--color-text-secondary)] shrink-0" />
                           <span className="truncate">{suggestion}</span>
                         </button>
                       ))}
@@ -430,12 +413,12 @@ export default function HomeTab({
               </form>
 
               {/* Quick Links */}
-              <div className="mt-8 w-full">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Star className="w-3 h-3 text-[var(--color-accent)]" />
-                  <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Quick Links</span>
+              <div className="mt-[clamp(1rem,3vw,2rem)] w-full">
+                <div className="flex items-center justify-center gap-[clamp(0.25rem,0.75vw,0.5rem)] mb-[clamp(0.5rem,1.5vw,1rem)]">
+                  <Star className="w-[clamp(0.5rem,1vw,0.75rem)] h-[clamp(0.5rem,1vw,0.75rem)] text-[var(--color-accent)]" />
+                  <span className="text-[clamp(0.5rem,2vw,0.625rem)] font-medium uppercase tracking-widest text-[var(--color-text-secondary)]">Quick Links</span>
                 </div>
-                <div className="flex flex-wrap justify-center gap-2">
+                <div className="grid grid-cols-3 gap-[clamp(0.25rem,0.75vw,0.5rem)] justify-items-center mx-10">
                   {starredBookmarks.slice(0, 6).map((bookmark, index) => (
                     <motion.button
                       key={bookmark.id}
@@ -443,14 +426,14 @@ export default function HomeTab({
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => onQuickLink(bookmark.url)}
-                      className="group/link flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[var(--color-bg-secondary)]/60 backdrop-blur-sm border border-[var(--color-border)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-bg-secondary)] transition-all duration-200 hover:shadow-md hover:shadow-[var(--color-accent)]/5"
+                      className="group/link w-full flex items-center gap-[clamp(0.25rem,0.75vw,0.625rem)] px-[clamp(0.375rem,1.25vw,1rem)] py-[clamp(0.25rem,0.75vw,0.625rem)] rounded-[clamp(0.5rem,1vw,0.75rem)] bg-[var(--color-bg-secondary)]/60 backdrop-blur-sm border border-[var(--color-border)] hover:border-[var(--color-accent)]/40 hover:bg-[var(--color-bg-secondary)] transition-all duration-200 hover:shadow-md hover:shadow-[var(--color-accent)]/5"
                       title={bookmark.name}
                     >
-                      <div className="w-5 h-5 rounded-md bg-[var(--color-bg-primary)] flex items-center justify-center overflow-hidden">
+                      <div className="w-[clamp(0.875rem,1.5vw,1.25rem)] h-[clamp(0.875rem,1.5vw,1.25rem)] rounded-[clamp(0.125rem,0.4vw,0.375rem)] bg-[var(--color-bg-primary)] flex items-center justify-center overflow-hidden shrink-0">
                         <img 
                           src={getFaviconUrls(bookmark.url)[0] || ""} 
                           alt="" 
-                          className="w-3.5 h-3.5"
+                          className="w-[clamp(0.625rem,2vw)] h-[clamp(0.625rem,2vw)]"
                           data-favicon-index="0"
                           data-bookmark-url={bookmark.url}
                           onError={(e) => {
@@ -468,15 +451,15 @@ export default function HomeTab({
                             }
                           }}
                         />
-                        <Globe className="w-3 h-3 text-[var(--color-text-secondary)] hidden" />
+                        <Globe className="w-[clamp(0.5rem,0.9vw,0.75rem)] h-[clamp(0.5rem,0.9vw,0.75rem)] text-[var(--color-text-secondary)] hidden" />
                       </div>
-                      <span className="text-xs font-medium max-w-[100px] truncate group-hover/link:text-[var(--color-accent)] transition-colors">{bookmark.name}</span>
+                      <span className="truncate text-xs  font-medium group-hover/link:text-[var(--color-accent)] transition-colors">{bookmark.name}</span>
                     </motion.button>
                   ))}
                   {starredBookmarks.length === 0 && (
-                    <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-dashed border-[var(--color-border)] text-[var(--color-text-secondary)]/50">
-                      <Zap className="w-4 h-4" />
-                      <span className="text-xs">Pin bookmarks to see them here</span>
+                    <div className="col-span-3 flex items-center gap-[clamp(0.25rem,0.75vw,0.5rem)] px-[clamp(0.5rem,1.5vw,1rem)] py-[clamp(0.375rem,1vw,0.75rem)] rounded-[clamp(0.5rem,1vw,0.75rem)] border border-dashed border-[var(--color-border)] text-[var(--color-text-secondary)]/50">
+                      <Zap className="w-[clamp(0.75rem,1.25vw,1rem)] h-[clamp(0.75rem,1.25vw,1rem)]" />
+                      <span className="text-[clamp(0.5rem,0.9vw,0.75rem)]">Pin bookmarks to see them here</span>
                     </div>
                   )}
                 </div>
@@ -489,9 +472,9 @@ export default function HomeTab({
         {/* Bottom Slide Indicator */}
         <motion.div 
           variants={itemVariants}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 cursor-pointer group"
+          className="absolute bottom-[clamp(0.5rem,1.5vw,1rem)] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 cursor-pointer group"
         >
-          <div className="w-20 h-1 rounded-full bg-[var(--color-accent)]/80 group-hover:bg-[var(--color-accent)]/50 transition-colors mt-1" />
+          <div className="w-[clamp(2.5rem,6vw,5rem)] h-[clamp(0.125rem,0.4vw,0.25rem)] rounded-full bg-[var(--color-accent)]/80 group-hover:bg-[var(--color-accent)]/50 transition-colors mt-1" />
         </motion.div>
 
       </motion.div>
