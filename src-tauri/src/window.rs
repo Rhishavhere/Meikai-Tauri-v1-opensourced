@@ -29,14 +29,15 @@ pub fn create_multi_webview_window(
         }
         _ => (FALLBACK_WINDOW_WIDTH, FALLBACK_WINDOW_HEIGHT)
     };
-    // Create the window without decorations
+    // Create the window WITH native decorations (saves ~80-100MB per window)
+    // Previously used custom title bar webview which required decorations(false) + transparent(true)
     let window = WindowBuilder::new(app, window_label)
         .title("Meikai Browser")
         .inner_size(window_width, window_height)
         .center()
         .resizable(true)
-        .decorations(false)
-        .transparent(true)
+        .decorations(true)   // Using native title bar to save WebView2 memory
+        .transparent(false)  // No transparency needed with native decorations
         .build()
         .map_err(|e| e.to_string())?;
 
@@ -45,27 +46,32 @@ pub fn create_multi_webview_window(
     let width = window_size.width as f64;
     let height = window_size.height as f64;
 
-    // Create title bar webview (loads from our React app with params)
-    let encoded_url = urlencoding::encode(url);
-    
-    // Valid for both dev (localhost) and build (tauri://)
-    // We inject a script to set the route and params before the app loads
-    let init_script = format!(
-        "window.history.replaceState({{}}, '', '/titlebar?windowLabel={}&url={}');",
-        window_label, encoded_url
-    );
-
-    let titlebar_webview = WebviewBuilder::new(
-        titlebar_label,
-        WebviewUrl::App("index.html".into())
-    )
-    .initialization_script(&init_script);
-    
-    window.add_child(
-        titlebar_webview,
-        LogicalPosition::new(0.0, 0.0),
-        LogicalSize::new(width, TITLE_BAR_HEIGHT),
-    ).map_err(|e| e.to_string())?;
+    // ============================================================================
+    // COMMENTED OUT: Custom title bar webview (saves ~80-100MB RAM per window)
+    // Uncomment this section to restore custom React title bar
+    // ============================================================================
+    // // Create title bar webview (loads from our React app with params)
+    // let encoded_url = urlencoding::encode(url);
+    // 
+    // // Valid for both dev (localhost) and build (tauri://)
+    // // We inject a script to set the route and params before the app loads
+    // let init_script = format!(
+    //     "window.history.replaceState({{}}, '', '/titlebar?windowLabel={}&url={}');",
+    //     window_label, encoded_url
+    // );
+    //
+    // let titlebar_webview = WebviewBuilder::new(
+    //     titlebar_label,
+    //     WebviewUrl::App("index.html".into())
+    // )
+    // .initialization_script(&init_script);
+    // 
+    // window.add_child(
+    //     titlebar_webview,
+    //     LogicalPosition::new(0.0, 0.0),
+    //     LogicalSize::new(width, TITLE_BAR_HEIGHT),
+    // ).map_err(|e| e.to_string())?;
+    // ============================================================================
 
     // Clone app handle for on_new_window handler
     let app_for_handler = app.clone();
@@ -125,10 +131,12 @@ pub fn create_multi_webview_window(
         }
     });
     
+    // Content webview now fills the entire window (no custom title bar offset)
+    // Previously used: LogicalPosition::new(0.0, TITLE_BAR_HEIGHT) and height - TITLE_BAR_HEIGHT
     window.add_child(
         content_webview,
-        LogicalPosition::new(0.0, TITLE_BAR_HEIGHT),
-        LogicalSize::new(width, height - TITLE_BAR_HEIGHT),
+        LogicalPosition::new(0.0, 0.0),  // Start at top since native decorations handle title bar
+        LogicalSize::new(width, height), // Full height
     ).map_err(|e| e.to_string())?;
 
     Ok(())

@@ -75,25 +75,31 @@ pub fn run() {
                     // Handle resize for multi-webview windows
                     if label.starts_with("window-") {
                         let id = label.trim_start_matches("window-");
-                        let titlebar_label = format!("titlebar-{}", id);
+                        // COMMENTED OUT: Title bar webview resize (using native decorations now)
+                        // let titlebar_label = format!("titlebar-{}", id);
                         let content_label = format!("content-{}", id);
                         
                         let width = size.width as f64;
                         let height = size.height as f64;
                         
-                        // Update title bar webview bounds
-                        if let Some(titlebar) = window.app_handle().get_webview(&titlebar_label) {
-                            let _ = titlebar.set_bounds(tauri::Rect {
-                                position: LogicalPosition::new(0.0, 0.0).into(),
-                                size: LogicalSize::new(width, TITLE_BAR_HEIGHT).into(),
-                            });
-                        }
+                        // ============================================================================
+                        // COMMENTED OUT: Title bar webview bounds update
+                        // Uncomment this section to restore custom React title bar
+                        // ============================================================================
+                        // // Update title bar webview bounds
+                        // if let Some(titlebar) = window.app_handle().get_webview(&titlebar_label) {
+                        //     let _ = titlebar.set_bounds(tauri::Rect {
+                        //         position: LogicalPosition::new(0.0, 0.0).into(),
+                        //         size: LogicalSize::new(width, TITLE_BAR_HEIGHT).into(),
+                        //     });
+                        // }
+                        // ============================================================================
                         
-                        // Update content webview bounds
+                        // Update content webview bounds (now fills entire window)
                         if let Some(content) = window.app_handle().get_webview(&content_label) {
                             let _ = content.set_bounds(tauri::Rect {
-                                position: LogicalPosition::new(0.0, TITLE_BAR_HEIGHT).into(),
-                                size: LogicalSize::new(width, height - TITLE_BAR_HEIGHT).into(),
+                                position: LogicalPosition::new(0.0, 0.0).into(),
+                                size: LogicalSize::new(width, height).into(),
                             });
                         }
                     }
