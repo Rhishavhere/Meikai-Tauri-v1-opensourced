@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "projectName": "Meikai Browser",
+  "description": "A minimal, clean, and fresh browser with reimagined UI - separate WebView2 windows controlled by a dock",
+  "version": "0.1.0",
+  "language": {
+    "primary": ["TypeScript", "Rust"],
+    "secondary": ["HTML", "CSS"]
+  },
+  "framework": {
+    "frontend": "React 19",
+    "desktop": "Tauri 2.0",
+    "styling": "Tailwind CSS 4",
+    "animation": "Framer Motion"
+  },
+  "ai_context": {
+    "codebase_style": "modular",
+    "naming_convention": "camelCase for TS, snake_case for Rust",
+    "architecture_pattern": "multi-webview with separate title bars",
+    "key_concepts": [
+      "Panel Mode vs Dock Mode transformation",
+      "Each browser tab is a separate native window",
+      "Multi-webview windows (title bar + content)",
+      "File-based persistence for bookmarks/settings"
+    ]
+  },
+  "paths": {
+    "documentation": ".claude/docs/",
+    "workflows": ".claude/workflows/",
+    "commands": ".claude/commands/"
+  }
+}
