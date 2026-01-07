@@ -1,72 +1,97 @@
-<div align="center">
+<p align="center">
+  <img src="./app-icon.svg" alt="Meikai Browser Logo" width="120" />
+</p>
 
-# 🌊 Meikai Browser
+<h1 align="center">明海 Meikai Browser</h1>
 
-### *A Reimagined Desktop Browser Experience*
+<p align="center">
+  <strong>A Minimal, Native Browser Built with Tauri 2.0</strong>
+</p>
 
-[![Tauri](https://img.shields.io/badge/Tauri-2.0-24C8D8?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Rust](https://img.shields.io/badge/Rust-1.80-CE422B?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+> ## ⚠️ DISCONTINUED PROJECT
+> 
+> **This Tauri-based version of Meikai Browser has been discontinued.**
+> 
+> The project has evolved into a proprietary AI-powered Agentic Browser built on Electron. 
+> 
+> **Visit the new version at: [www.meikai.rhishav.com](https://www.meikai.rhishav.com)**
+> 
+> This repository is now open-sourced for community reference. No active development or support is provided for this version.
 
 ---
 
-**Meikai Browser** or **Meik** reimagines web browsing with a unique transformation architecture. Start with an elegant launcher panel, then watch it morph into a screen-top "notch" control bar while your websites open in native, fully-featured windows.
+## About
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Architecture](#-architecture) • [Development](#-development) • [Contributing](#-contributing)
+**Meikai** is a minimal, native web browser experiment built with **Tauri 2.0**. It leverages the system's native WebView2 (on Windows) to provide a lightweight browsing experience with a unique UI paradigm featuring transformable window modes.
 
----
-
-</div>
+Unlike traditional browsers, Meikai explores a different interaction model with:
+- **Panel Mode**: A beautiful launcher interface for quick access
+- **Dock Mode**: A compact floating bar that stays on top
+- **MiniPanel Mode**: An expanded dock with search and bookmarks
 
 ## ✨ Features
 
-### 🎯 **Dynamic Window Transformation**
-- **Panel Mode**: Beautiful launcher interface with search bar and quick links
-- **Notch Mode**: Main window transforms into a screen-top control bar when browsing
-- **Seamless Transition**: Smooth transformation between modes
+### 🎨 Unique UI Paradigm
+- **Transformable Windows** - Seamlessly switch between Panel, Dock, and MiniPanel modes
+- **Frameless Design** - Clean, borderless windows with custom title bars
 
-### 🪟 **Native Window Experience**
-- Each website opens in a **separate native WebView2 window**
-- Fully resizable, draggable, and independent
-- Native window decorations and controls
-- No tab clutter - pure multi-window browsing
+### 🚀 Performance
+- **Native WebView2** - Uses the system's native web engine (no bundled browser)
+- **Lightweight** - Minimal memory footprint compared to Chromium-based browsers
+- **Fast Startup** - Near-instant launch times
 
-### 🎮 **Powerful Controls**
-- **Navigation**: Back, Forward, Reload, Home buttons
-- **Smart URL Bar**: Detects URLs vs. search queries automatically
-- **Window Management**: Minimize, maximize, close from the notch
-- **Always on Top**: Notch stays accessible above all windows
+### 🔧 Browser Features
+- **Multi-Window Support** - Open multiple browsing windows simultaneously
+- **Navigation Controls** - Back, forward, reload, and home functionality
+- **Smart URL Bar** - Auto-detects URLs vs search queries
+- **Bookmarks** - Save and manage your favorite sites via the Tray
+- **Quick Links** - Customizable quick access buttons
 
-### 🚀 **Modern Tech Stack**
-- Built with **Tauri 2.0** - Fast, secure, and lightweight
-- **React 19** + **TypeScript** for type-safe UI
-- **Tailwind CSS 4** for beautiful, responsive design
-- **Framer Motion** for smooth animations
-- **WebView2** - Native Windows browser engine
+### 🎯 Window Modes
 
-### 🎨 **Customizable Design**
-- Clean, modern interface
-- Customizable quick links
-- Smooth animations and transitions
-- Dark mode notch with glass-morphism effects
+| Mode | Description |
+|------|-------------|
+| **Panel** | Full launcher interface with search, quick links, and settings |
+| **Dock** | Minimal floating bar at the top of the screen, always visible |
+| **MiniPanel** | Expanded dock with bookmarks, search, and window management |
 
----
+## 🛠️ Tech Stack
 
-## 📦 Installation
+### Frontend
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [React](https://react.dev/) | 19.1 | UI Framework |
+| [TypeScript](https://www.typescriptlang.org/) | 5.8 | Type Safety |
+| [Vite](https://vitejs.dev/) | 7.0 | Build Tool |
+
+### Backend
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [Tauri](https://tauri.app/) | 2.0 | Desktop Framework |
+| [Rust](https://www.rust-lang.org/) | 2021 Edition | Backend Logic |
+| [WebView2](https://developer.microsoft.com/microsoft-edge/webview2/) | System | Web Rendering |
+
+### Tauri Plugins
+- `tauri-plugin-opener` - URL handling
+- `tauri-plugin-shell` - Shell commands
+- `tauri-plugin-fs` - File system access
+- `tauri-plugin-dialog` - Native dialogs
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- **Windows 10/11** (WebView2 required)
-- **Node.js** 18+ and npm
-- **Rust** 1.70+
 
-### Quick Start
+- **Node.js** 18+ and npm
+- **Rust** (latest stable) - [Install Rust](https://rustup.rs/)
+- **Windows**: WebView2 Runtime (usually pre-installed on Windows 10/11)
+- **Linux**: WebKitGTK dependencies
+- **macOS**: Xcode Command Line Tools
+
+### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/meikai-browser.git
+   git clone https://github.com/Rhishavhere/Meikai-(Tauri v1)-opensourced.git
    cd meikai-browser
    ```
 
@@ -85,120 +110,230 @@
    npm run tauri build
    ```
 
-The built executable will be in `src-tauri/target/release/`.
+### Platform-Specific Setup
 
----
+<details>
+<summary><strong>Windows</strong></summary>
 
-## 🎯 Usage
+Windows 10/11 typically has WebView2 pre-installed. If not:
+1. Download and install [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
+2. Ensure you have the Visual Studio C++ Build Tools installed
 
-### Panel Mode (Launcher)
-1. Launch Meikai Browser
-2. Enter a URL or search query in the search bar
-3. Or click one of the quick link buttons (Google, YouTube, GitHub, etc.)
+</details>
 
-### Notch Mode (Active Browsing)
-- Once you navigate to a URL, the main window transforms into a notch at the top of your screen
-- The website opens in a new centered window
-- Use the notch controls to:
-  - Navigate back/forward
-  - Reload the page
-  - Go to home page
-  - Enter new URLs
-  - Close the window (returns to Panel Mode)
+<details>
+<summary><strong>Linux (Fedora)</strong></summary>
 
-### Keyboard Shortcuts
-- `Enter` - Navigate to URL or search
-- Focus URL bar - Click or auto-selected on navigation
+```bash
+sudo dnf install gtk3-devel webkit2gtk4.1-devel libappindicator-gtk3-devel librsvg2-devel
+```
 
----
+</details>
 
+<details>
+<summary><strong>Linux (Ubuntu/Debian)</strong></summary>
 
+```bash
+sudo apt install libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+```
 
-### Technology Stack
+</details>
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React 19, TypeScript, Vite |
-| **Styling** | Tailwind CSS 4 (@tailwindcss/vite) |
-| **UI Library** | Lucide React (icons), Framer Motion (animations) |
-| **Desktop Framework** | Tauri 2.0 (unstable features) |
-| **Backend** | Rust |
-| **Browser Engine** | WebView2 (Windows) |
-| **Build Tool** | Vite 5 |
+<details>
+<summary><strong>macOS</strong></summary>
 
-### Key Components
+```bash
+xcode-select --install
+```
 
-- **`src/App.tsx`** - Main UI with Panel/Notch dual modes
-- **`src-tauri/src/lib.rs`** - Rust backend with Tauri commands
-- **`src-tauri/capabilities/default.json`** - Window permissions
-- **`src-tauri/tauri.conf.json`** - Tauri configuration
+</details>
 
----
-
-## 🛠️ Development
-
-### Project Structure
+## 📁 Project Structure
 
 ```
 meikai-browser/
-├── src/                      # React frontend
-│   ├── App.tsx              # Main application (Panel + Notch modes)
-│   ├── main.tsx             # React entry point
-│   └── index.css            # Tailwind styles
-├── src-tauri/               # Rust backend
+├── src/                        # Frontend (React + TypeScript)
+│   ├── App.tsx                 # Main application component
+│   ├── main.tsx                # React entry point
+│   ├── index.css               # Global styles
+│   ├── components/             # UI Components
+│   │   ├── Panel/              # Panel mode components
+│   │   │   ├── Home.tsx        # Home view with quick links
+│   │   │   ├── Settings.tsx    # Settings view
+│   │   │   ├── Profile.tsx     # User profile
+│   │   │   └── Tray.tsx        # Bookmarks tray
+│   │   ├── Dock.tsx            # Dock mode component
+│   │   ├── MiniPanel.tsx       # Expanded dock component
+│   │   ├── TitleBar.tsx        # Custom title bar
+│   │   └── BetaDisclaimer.tsx  # Beta notice overlay
+│   └── hooks/                  # Custom React hooks
+│
+├── src-tauri/                  # Backend (Rust)
 │   ├── src/
-│   │   ├── lib.rs          # Tauri commands and logic
-│   │   └── main.rs         # Application entry point
-│   ├── capabilities/
-│   │   └── default.json    # Window permissions
-│   ├── Cargo.toml          # Rust dependencies
-│   └── tauri.conf.json     # Tauri configuration
-├── index.html               # Main HTML entry
-├── vite.config.ts           # Vite configuration
-├── tailwind.config.js       # Tailwind configuration
-├── CLAUDE.md                # AI assistant documentation
-├── INFO.md                  # Customization guide
-└── README.md                # This file
+│   │   ├── lib.rs              # Main library & Tauri commands
+│   │   ├── main.rs             # Application entry point
+│   │   ├── window.rs           # Window management
+│   │   ├── navigation.rs       # Browser navigation
+│   │   ├── search.rs           # Search functionality
+│   │   ├── titlebar.rs         # Title bar controls
+│   │   ├── url_monitor.rs      # URL monitoring
+│   │   └── window_controls.rs  # Window control commands
+│   ├── capabilities/           # Tauri 2.0 permissions
+│   ├── icons/                  # Application icons
+│   ├── Cargo.toml              # Rust dependencies
+│   └── tauri.conf.json         # Tauri configuration
+│
+├── index.html                  # HTML entry point
+├── vite.config.ts              # Vite configuration
+├── package.json                # Node.js dependencies
+└── INFO.md                     # Detailed customization guide
 ```
 
-### Available Commands
+## ⚙️ Configuration
 
-```bash
-# Development
-npm run tauri dev          # Start dev server + Tauri app
-npm run dev                # Start Vite dev server only
-npm run build              # Build frontend
+### Window Settings
 
-# Production
-npm run tauri build        # Build production executable
+Modify `src-tauri/tauri.conf.json`:
 
-# Rust
-cargo clean --manifest-path src-tauri/Cargo.toml  # Clean Rust build
-cargo build --manifest-path src-tauri/Cargo.toml  # Build Rust backend
+```json
+{
+  "app": {
+    "windows": [
+      {
+        "title": "Meikai Browser",
+        "width": 900,
+        "height": 600,
+        "decorations": false,
+        "transparent": true,
+        "resizable": false,
+        "center": true
+      }
+    ]
+  }
+}
 ```
 
-### Customization
+### Permissions
 
-For detailed customization guides, see **[INFO.md](INFO.md)**:
-- Modify Panel Mode UI
-- Customize Notch Mode appearance
-- Add new Tauri commands
-- Configure window behavior
-- Update permissions
-- Add new quick links
+Tauri 2.0 requires explicit permissions. See `src-tauri/capabilities/default.json` for the list of enabled capabilities.
 
-## 🧪 Testing
+## 🎨 Customization
 
-Currently, the browser is in active development. Testing includes:
-- Manual testing of window transformations
-- URL navigation verification
-- Window control functionality
-- Permission system validation
+For detailed customization instructions, see the [INFO.md](./INFO.md) file which includes:
 
+- Modifying the Panel UI
+- Customizing the Dock/Notch appearance
+- Adding new navigation features
+- Changing window behavior
+- Adding new Tauri commands
 
+## 📜 Scripts
 
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Vite dev server |
+| `npm run build` | Build frontend for production |
+| `npm run tauri dev` | Run Tauri in development mode |
+| `npm run tauri build` | Create production builds (MSI/NSIS) |
 
-### 🌊 Made with passion for innovative browsing experiences
+## 🏗️ Architecture
 
+```mermaid
+flowchart TB
+    subgraph Frontend["Frontend (React + TypeScript)"]
+        direction TB
+        App["App.tsx<br/>Main Controller"]
+        
+        subgraph Modes["Window Modes"]
+            Panel["Panel Mode<br/>━━━━━━━━━━━<br/>Home • Settings<br/>Profile • Tray"]
+            Dock["Dock Mode<br/>━━━━━━━━━━<br/>Floating Bar"]
+            MiniPanel["MiniPanel Mode<br/>━━━━━━━━━━━━━<br/>Search • Tabs"]
+        end
+        
+        App --> Modes
+    end
 
-</div>
+    subgraph IPC["Tauri IPC Layer"]
+        invoke["invoke()"]
+        listen["listen()"]
+    end
+
+    subgraph Backend["Backend (Rust)"]
+        direction TB
+        
+        subgraph Commands["Tauri Commands"]
+            window["window.rs<br/>━━━━━━━━━━<br/>create_content_window<br/>transform_to_dock"]
+            nav["navigation.rs<br/>━━━━━━━━━━━━<br/>go_back • go_forward<br/>reload • navigate"]
+            controls["window_controls.rs<br/>━━━━━━━━━━━━━━━<br/>minimize • maximize<br/>close"]
+        end
+        
+        subgraph Plugins["Tauri Plugins"]
+            fs["plugin-fs"]
+            dialog["plugin-dialog"]
+            shell["plugin-shell"]
+        end
+    end
+
+    subgraph Native["Native Layer"]
+        WebView2["WebView2 Runtime<br/>━━━━━━━━━━━━━━━<br/>Web Content Rendering"]
+        OS["Operating System<br/>━━━━━━━━━━━━━━<br/>Window Management"]
+    end
+
+    Frontend <-->|"Commands & Events"| IPC
+    IPC <--> Backend
+    Commands --> Native
+    Plugins --> OS
+    WebView2 <-->|"URL Navigation"| nav
+```
+
+### Data Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Panel as Panel/Dock UI
+    participant Tauri as Tauri IPC
+    participant Rust as Rust Backend
+    participant WV as WebView2
+
+    User->>Panel: Enter URL / Click Link
+    Panel->>Tauri: invoke("create_content_window", url)
+    Tauri->>Rust: Handle Command
+    Rust->>WV: Create WebView Window
+    WV-->>Rust: Window Created
+    Rust-->>Panel: Return window_label
+    
+    User->>Panel: Click Back/Forward
+    Panel->>Tauri: invoke("go_back", window_label)
+    Tauri->>Rust: Handle Navigation
+    Rust->>WV: eval("history.back()")
+    WV-->>User: Page Updates
+```
+
+## 🤝 Contributing
+
+As this project is discontinued, no active contribution is expected. However, feel free to:
+
+- Fork the repository for your own experiments
+- Reference the architecture for your own projects
+
+## 📄 License
+
+This project is open-sourced under the [MIT License](./LICENSE).
+
+## 👨‍💻 Author
+
+**Rhishav Dhali**
+
+- Website: [rhishav.com](https://rhishav.com)
+- Meikai (New Version): [meikai.rhishav.com](https://www.meikai.rhishav.com)
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ using Tauri, React, and Rust</sub>
+</p>
+
+<p align="center">
+  <sub>Meikai - The Web Reimagined</sub>
+</p>
