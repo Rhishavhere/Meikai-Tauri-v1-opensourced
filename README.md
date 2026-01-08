@@ -2,10 +2,10 @@
   <img src="./app-icon.svg" alt="Meikai Browser Logo" width="120" />
 </p>
 
-<h1 align="center">明海 Meikai Browser</h1>
+<h1 align="center">Meikai Browser</h1>
 
 <p align="center">
-  <strong>A Minimal, Native Browser Built with Tauri 2.0</strong>
+  <strong>A Minimal, Native Browser Built with Tauri</strong>
 </p>
 
 > ## ⚠️ DISCONTINUED PROJECT
