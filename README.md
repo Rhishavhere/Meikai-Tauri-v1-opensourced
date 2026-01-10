@@ -12,7 +12,7 @@
 > 
 > **This Tauri-based version of Meikai Browser has been discontinued.**
 > 
-> The project has evolved into a proprietary AI-powered Agentic Browser built on Electron. 
+> The project has evolved into a proprietary AI-powered Agentic Browser. 
 > 
 > **Visit the new version at: [www.meikai.rhishav.com](https://www.meikai.rhishav.com)**
 > 
@@ -326,13 +326,10 @@ This project is open-sourced under the [MIT License](./LICENSE).
 **Rhishav Dhali**
 
 - Website: [rhishav.com](https://rhishav.com)
-- Meikai (New Version): [meikai.rhishav.com](https://www.meikai.rhishav.com)
+- Try Meikai (Full Version): [meikai.rhishav.com](https://meikai.rhishav.com)
 
 ---
 
-<p align="center">
-  <sub>Built with ❤️ using Tauri, React, and Rust</sub>
-</p>
 
 <p align="center">
   <sub>Meikai - The Web Reimagined</sub>
