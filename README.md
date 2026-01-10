@@ -14,7 +14,7 @@
 > 
 > The project has evolved into a proprietary AI-powered Agentic Browser. 
 > 
-> **Visit the new version at: [www.meikai.rhishav.com](https://www.meikai.rhishav.com)**
+> **Visit the full version at: [www.meikai.rhishav.com](https://meikai.rhishav.com)**
 > 
 > This repository is now open-sourced for community reference. No active development or support is provided for this version.
 
